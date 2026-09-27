@@ -108,35 +108,35 @@ export function SettingsView({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Settings className="w-5 h-5 text-emerald-400" />
+        <h2 className="text-2xl font-heading font-black tracking-wider text-white uppercase flex items-center gap-2">
+          <Settings className="w-5 h-5 text-[#ffb60e]" />
           Tournament Lifecycle & Finalization Lock
         </h2>
-        <p className="text-xs text-slate-400 mt-0.5">
+        <p className="text-xs text-slate-400 mt-0.5 font-sans">
           Pre-flight integrity verification, competition finalization, and immutable audit trails
         </p>
       </div>
 
       {finalizeError && (
-        <div className="p-3 rounded-lg bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-medium">
+        <div className="p-3 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-mono">
           {finalizeError}
         </div>
       )}
 
       {/* Pre-Flight Finalization Checklist Card */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="tactical-cut bg-[#121212] border border-white/10 p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            <h3 className="text-base font-bold text-white">Pre-Flight Finalization Audit</h3>
+            <ShieldCheck className="w-5 h-5 text-[#ffb60e]" />
+            <h3 className="text-lg font-heading font-black tracking-wide text-white uppercase">Pre-Flight Finalization Audit</h3>
           </div>
           {tournament?.isFinalized ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold font-mono">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 tactical-cut bg-[#ffb60e]/20 text-[#ffb60e] border border-[#ffb60e]/40 text-xs font-bold font-mono">
               <Lock className="w-3.5 h-3.5" />
               TOURNAMENT FINALIZED & LOCKED
             </span>
           ) : (
-            <span className="text-xs font-mono text-amber-400 font-bold">
+            <span className="text-xs font-mono text-[#ffb60e] font-bold uppercase tracking-wider">
               STATUS: {tournament?.status}
             </span>
           )}
@@ -146,18 +146,18 @@ export function SettingsView({
           {checklist.map((item, idx) => (
             <div
               key={idx}
-              className={`p-3 rounded-lg border flex items-center justify-between ${
+              className={`p-3.5 tactical-cut flex items-center justify-between border ${
                 item.passed
-                  ? 'bg-slate-950/80 border-emerald-500/30 text-slate-200'
-                  : 'bg-slate-950/80 border-slate-800 text-slate-400'
+                  ? 'bg-[#0a0a0a] border-[#ffb60e]/30 text-slate-200'
+                  : 'bg-[#0a0a0a] border-white/10 text-slate-400'
               }`}
             >
               <div>
-                <p className="text-xs font-bold text-white">{item.label}</p>
+                <p className="text-xs font-heading font-bold text-white uppercase tracking-wider">{item.label}</p>
                 <p className="text-[11px] font-mono text-slate-400 mt-0.5">{item.details}</p>
               </div>
               {item.passed ? (
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <CheckCircle className="w-4 h-4 text-[#ffb60e]" />
               ) : (
                 <XCircle className="w-4 h-4 text-slate-600" />
               )}
@@ -170,38 +170,38 @@ export function SettingsView({
             <button
               onClick={handleFinalize}
               disabled={isFinalizing || !allPassed}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="tactical-btn-gold px-6 py-3 text-xs uppercase tracking-wider font-heading font-black shadow-xl shadow-[#ffb60e]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <Lock className="w-3.5 h-3.5" />
-              {isFinalizing ? 'Auditing & Locking...' : 'Finalize Tournament & Lock Standings'}
+              {isFinalizing ? 'AUDITING & LOCKING...' : 'FINALIZE TOURNAMENT & LOCK STANDINGS'}
             </button>
           </div>
         )}
       </div>
 
       {/* Immutable Audit Log History */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center gap-2 pb-2 border-b border-slate-800">
-          <History className="w-4 h-4 text-blue-400" />
-          <h3 className="text-sm font-bold text-white">Immutable Tournament Audit Trail</h3>
+      <div className="tactical-cut bg-[#121212] border border-white/10 p-6 shadow-xl space-y-4">
+        <div className="flex items-center gap-2 pb-2 border-b border-white/10">
+          <History className="w-4 h-4 text-[#ffb60e]" />
+          <h3 className="text-lg font-heading font-black tracking-wide text-white uppercase">Immutable Tournament Audit Trail</h3>
         </div>
 
         <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
           {auditLogs.length === 0 ? (
-            <p className="text-xs text-slate-500 text-center py-4">No logged actions recorded.</p>
+            <p className="text-xs text-slate-500 text-center py-4 font-mono">No logged actions recorded.</p>
           ) : (
             auditLogs.map((log) => (
               <div
                 key={log.id}
-                className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800/80 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                className="p-3 tactical-cut bg-[#0a0a0a] border border-white/10 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
               >
                 <div>
-                  <span className="font-mono font-bold text-emerald-400 mr-2 text-[10px] bg-slate-800 px-1.5 py-0.5 rounded">
+                  <span className="font-mono font-bold text-[#ffb60e] mr-2 text-[10px] bg-[#1a1a1a] border border-[#ffb60e]/30 px-1.5 py-0.5 tactical-cut">
                     {log.action}
                   </span>
-                  <span className="text-slate-300">{log.reason || 'Action logged'}</span>
+                  <span className="text-slate-200">{log.reason || 'Action logged'}</span>
                 </div>
-                <span className="text-[10px] font-mono text-slate-500 shrink-0">
+                <span className="text-[10px] font-mono text-slate-400 shrink-0">
                   {new Date(log.createdAt).toLocaleString()}
                 </span>
               </div>

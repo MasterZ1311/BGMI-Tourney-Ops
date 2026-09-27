@@ -10,12 +10,15 @@ import {
   CheckCircle,
   AlertOctagon,
   RefreshCw,
+  Loader2,
+  AlertTriangle,
 } from 'lucide-react';
 import { exportLeaderboardToCsv } from '@/lib/export/formatters';
 
 export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
   const [data, setData] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<any[]>([]);
   const [matches, setMatches] = useState<any[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
@@ -23,6 +26,7 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
 
   const fetchLeaderboard = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const url = new URL(`/api/tournaments/${tournamentId}/leaderboard`, window.location.origin);
       if (selectedGroupId) url.searchParams.set('groupId', selectedGroupId);
@@ -32,9 +36,12 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
       const json = await res.json();
       if (json.success) {
         setData(json.data);
+      } else {
+        setError(json.error?.message || 'Failed to fetch leaderboard standings');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError('Network error while loading leaderboard standings');
     } finally {
       setIsLoading(false);
     }
@@ -74,48 +81,48 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
       {/* Header and Filter Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-amber-400" />
-            Official Tournament Leaderboard
+          <h2 className="text-3xl font-teko uppercase font-bold tracking-wider text-white flex items-center gap-2 leading-none">
+            <Trophy className="w-6 h-6 text-[#ffb60e]" />
+            OFFICIAL TOURNAMENT LEADERBOARD
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Rule: <strong className="text-emerald-400">{data?.scoringRuleName || 'BGIS 10-Point'}</strong> • Live derived from verified match sheets
+          <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-1">
+            RULESET: <strong className="text-[#ffb60e]">{data?.scoringRuleName || 'BGIS 10-POINT SYSTEM'}</strong> • LIVE DERIVED FROM VERIFIED MATCH SHEETS
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportCsv}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-condensed uppercase font-bold tracking-wider bg-[#222222] hover:bg-[#ffb60e] hover:text-black text-gray-200 border border-[#444444] tactical-cut transition-colors"
           >
-            <Download className="w-3.5 h-3.5 text-emerald-400" />
-            Export CSV
+            <Download className="w-3.5 h-3.5 text-[#ffb60e]" />
+            EXPORT CSV
           </button>
 
           <button
             onClick={handlePrint}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-condensed uppercase font-bold tracking-wider bg-[#222222] hover:bg-[#2a2a2a] text-gray-200 border border-[#444444] tactical-cut transition-colors"
           >
-            <Printer className="w-3.5 h-3.5 text-blue-400" />
-            Print Standings
+            <Printer className="w-3.5 h-3.5 text-gray-400" />
+            PRINT
           </button>
         </div>
       </div>
 
       {/* Filter Selector Strip */}
-      <div className="flex flex-wrap items-center gap-3 bg-slate-900 border border-slate-800 rounded-xl p-3">
-        <div className="flex items-center gap-1.5 text-xs text-slate-400">
-          <Filter className="w-3.5 h-3.5" />
-          <span>View Scope:</span>
+      <div className="flex flex-wrap items-center gap-3 bg-[#171716] border border-[#333333] tactical-cut p-3">
+        <div className="flex items-center gap-1.5 text-xs font-condensed font-bold uppercase tracking-wider text-gray-400">
+          <Filter className="w-3.5 h-3.5 text-[#ffb60e]" />
+          <span>VIEW SCOPE:</span>
         </div>
 
         {/* Group Selector */}
         <select
           value={selectedGroupId}
           onChange={(e) => setSelectedGroupId(e.target.value)}
-          className="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 focus:ring-1 focus:ring-emerald-500"
+          className="bg-[#121212] border border-[#333333] text-gray-200 text-xs px-3 py-1 font-condensed font-bold uppercase focus:border-[#ffb60e] focus:outline-none"
         >
-          <option value="">All Groups (Overall Standings)</option>
+          <option value="">ALL GROUPS (OVERALL STANDINGS)</option>
           {groups.map((g) => (
             <option key={g.id} value={g.id}>
               {g.name}
@@ -127,9 +134,9 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
         <select
           value={selectedMatchId}
           onChange={(e) => setSelectedMatchId(e.target.value)}
-          className="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 focus:ring-1 focus:ring-emerald-500"
+          className="bg-[#121212] border border-[#333333] text-gray-200 text-xs px-3 py-1 font-condensed font-bold uppercase focus:border-[#ffb60e] focus:outline-none"
         >
-          <option value="">Cumulative (All Matches)</option>
+          <option value="">CUMULATIVE (ALL MATCHES)</option>
           {matches.map((m) => (
             <option key={m.id} value={m.id}>
               {m.title}
@@ -139,124 +146,175 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
 
         <button
           onClick={fetchLeaderboard}
-          className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800 ml-auto"
+          className="p-1.5 text-gray-400 hover:text-[#ffb60e] hover:bg-[#222222] ml-auto transition-colors"
           title="Refresh Standings"
         >
           <RefreshCw className="w-3.5 h-3.5" />
         </button>
       </div>
 
+      {/* Error State Banner */}
+      {error && (
+        <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={fetchLeaderboard}
+            className="px-2.5 py-1 text-[11px] font-bold bg-rose-500/30 hover:bg-rose-500/50 text-white rounded transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Leaderboard Data Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+      <div className="bg-[#171716] border border-[#333333] tactical-cut overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px] bg-slate-950/80">
-                <th className="py-3 px-4 text-center w-14">Rank</th>
-                <th className="py-3 px-4">Squad Name</th>
-                <th className="py-3 px-4 text-center">Matches</th>
+              <tr className="border-b border-[#333333] text-gray-400 font-condensed uppercase font-bold text-xs bg-[#101010]">
+                <th className="py-3 px-4 text-center w-16">RANK</th>
+                <th className="py-3 px-4">SQUAD NAME</th>
+                <th className="py-3 px-4 text-center">MATCHES</th>
                 <th className="py-3 px-4 text-center">WWCD</th>
-                <th className="py-3 px-4 text-center">Placement Pts</th>
-                <th className="py-3 px-4 text-center">Kill Pts</th>
-                <th className="py-3 px-4 text-center">Bonus</th>
-                <th className="py-3 px-4 text-center">Penalties</th>
-                <th className="py-3 px-4 text-right font-bold text-white text-sm">Total Points</th>
+                <th className="py-3 px-4 text-center">PLACEMENT PTS</th>
+                <th className="py-3 px-4 text-center">KILL PTS</th>
+                <th className="py-3 px-4 text-center">BONUS</th>
+                <th className="py-3 px-4 text-center">PENALTIES</th>
+                <th className="py-3 px-4 text-right font-bold text-white text-sm">TOTAL POINTS</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-medium">
-              {data?.standings?.map((standing: any, idx: number) => {
-                const isLeader = standing.rank === 1;
-                const isTop3 = standing.rank <= 3;
+            <tbody className="divide-y divide-[#262626] font-medium font-condensed">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={9} className="py-16 text-center text-gray-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Loader2 className="w-6 h-6 text-[#ffb60e] animate-spin" />
+                      <span className="text-xs font-condensed uppercase font-bold text-gray-300">Computing tournament standings...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : !data?.standings || data.standings.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="py-14 text-center text-gray-500">
+                    <div className="flex flex-col items-center justify-center gap-1.5">
+                      <Trophy className="w-8 h-8 text-gray-600 mb-1" />
+                      <span className="font-teko uppercase text-base text-gray-300">NO STANDINGS RECORDED YET</span>
+                      <span className="text-xs text-gray-500">
+                        Standings will update automatically as soon as match results are published.
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                data.standings.map((standing: any) => {
+                  const isLeader = standing.rank === 1;
+                  const isTop3 = standing.rank <= 3;
 
-                return (
-                  <tr
-                    key={standing.teamId}
-                    className={`hover:bg-slate-800/40 transition-colors ${
-                      isLeader
-                        ? 'bg-amber-950/20 font-bold border-l-2 border-amber-400'
-                        : isTop3
-                        ? 'bg-slate-800/20'
-                        : ''
-                    }`}
-                  >
-                    {/* Rank */}
-                    <td className="py-3 px-4 text-center font-mono">
-                      {isLeader ? (
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 font-black border border-amber-500/40 text-xs">
-                          1
-                        </span>
-                      ) : standing.rank === 2 ? (
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-400/20 text-slate-300 font-bold border border-slate-400/40 text-xs">
-                          2
-                        </span>
-                      ) : standing.rank === 3 ? (
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-700/20 text-amber-500 font-bold border border-amber-700/40 text-xs">
-                          3
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 font-bold">#{standing.rank}</span>
-                      )}
-                    </td>
+                  return (
+                    <tr
+                      key={standing.teamId}
+                      className={`hover:bg-[#202020] transition-colors ${
+                        isLeader
+                          ? 'bg-[#ffb60e]/10 font-bold border-l-4 border-l-[#ffb60e]'
+                          : isTop3
+                          ? 'bg-[#1a1a1a]'
+                          : ''
+                      }`}
+                    >
+                      {/* Rank */}
+                      <td className="py-3 px-4 text-center font-teko">
+                        {isLeader ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 tactical-cut bg-[#ffb60e] text-black font-black text-sm shadow-md shadow-[#ffb60e]/30">
+                            1
+                          </span>
+                        ) : standing.rank === 2 ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 tactical-cut bg-gray-300 text-black font-black text-sm">
+                            2
+                          </span>
+                        ) : standing.rank === 3 ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 tactical-cut bg-[#c57934] text-white font-black text-sm">
+                            3
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 font-bold text-base">#{standing.rank}</span>
+                        )}
+                      </td>
 
-                    {/* Squad */}
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-white text-sm">{standing.teamName}</span>
-                        <span className="text-[10px] text-emerald-400 font-mono font-bold">
-                          [{standing.teamTag}]
-                        </span>
-                      </div>
-                    </td>
+                      {/* Squad with Tie-Breaker Chip */}
+                      <td className="py-3 px-4">
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white text-sm">{standing.teamName}</span>
+                            <span className="text-[10px] text-[#ffb60e] font-condensed font-bold">
+                              [{standing.teamTag}]
+                            </span>
+                          </div>
+                          {standing.tieBreakReason && (
+                            <div className="mt-1">
+                              <span
+                                className="inline-flex items-center gap-1 text-[10px] font-condensed font-bold text-[#ffb60e] bg-[#ffb60e]/10 border border-[#ffb60e]/30 px-1.5 py-0.5 tactical-cut uppercase tracking-wider"
+                                title={`Tie-breaker criteria: ${standing.tieBreakReason}`}
+                              >
+                                ⚖️ {standing.tieBreakReason}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </td>
 
-                    {/* Matches Played */}
-                    <td className="py-3 px-4 text-center font-mono text-slate-300">
-                      {standing.matchesPlayed}
-                    </td>
+                      {/* Matches Played */}
+                      <td className="py-3 px-4 text-center font-bold text-gray-300 text-sm">
+                        {standing.matchesPlayed}
+                      </td>
 
-                    {/* WWCD count */}
-                    <td className="py-3 px-4 text-center">
-                      {standing.wwcdCount > 0 ? (
-                        <span className="inline-flex items-center gap-1 font-bold text-amber-400 font-mono text-xs">
-                          🍗 {standing.wwcdCount}
-                        </span>
-                      ) : (
-                        <span className="text-slate-600 font-mono">0</span>
-                      )}
-                    </td>
+                      {/* WWCD count */}
+                      <td className="py-3 px-4 text-center">
+                        {standing.wwcdCount > 0 ? (
+                          <span className="inline-flex items-center gap-1 font-black text-[#ffb60e] text-sm">
+                            🍗 {standing.wwcdCount}
+                          </span>
+                        ) : (
+                          <span className="text-gray-600">0</span>
+                        )}
+                      </td>
 
-                    {/* Placement Points */}
-                    <td className="py-3 px-4 text-center font-mono text-slate-300">
-                      {standing.placementPoints}
-                    </td>
+                      {/* Placement Points */}
+                      <td className="py-3 px-4 text-center text-gray-200 font-bold text-sm">
+                        {standing.placementPoints}
+                      </td>
 
-                    {/* Kill Points */}
-                    <td className="py-3 px-4 text-center font-mono text-emerald-400 font-semibold">
-                      {standing.killPoints}
-                    </td>
+                      {/* Kill Points */}
+                      <td className="py-3 px-4 text-center text-[#ffb60e] font-bold text-sm">
+                        {standing.killPoints}
+                      </td>
 
-                    {/* Bonus Points */}
-                    <td className="py-3 px-4 text-center font-mono text-slate-400">
-                      {standing.bonusPoints > 0 ? `+${standing.bonusPoints}` : '0'}
-                    </td>
+                      {/* Bonus Points */}
+                      <td className="py-3 px-4 text-center text-gray-400 font-bold text-sm">
+                        {standing.bonusPoints > 0 ? `+${standing.bonusPoints}` : '0'}
+                      </td>
 
-                    {/* Penalties */}
-                    <td className="py-3 px-4 text-center font-mono">
-                      {standing.penaltyPoints > 0 ? (
-                        <span className="text-rose-400 font-bold">
-                          -{standing.penaltyPoints}
-                        </span>
-                      ) : (
-                        <span className="text-slate-600">0</span>
-                      )}
-                    </td>
+                      {/* Penalties */}
+                      <td className="py-3 px-4 text-center">
+                        {standing.penaltyPoints > 0 ? (
+                          <span className="text-rose-400 font-bold text-sm">
+                            -{standing.penaltyPoints}
+                          </span>
+                        ) : (
+                          <span className="text-gray-600 text-sm">0</span>
+                        )}
+                      </td>
 
-                    {/* Net Total Points */}
-                    <td className="py-3 px-4 text-right font-black font-mono text-base text-emerald-400">
-                      {standing.totalPoints}
-                    </td>
-                  </tr>
-                );
-              })}
+                      {/* Net Total Points */}
+                      <td className="py-3 px-4 text-right font-black text-lg text-[#ffb60e]">
+                        {standing.totalPoints}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

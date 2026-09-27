@@ -92,20 +92,20 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Scale className="w-5 h-5 text-amber-300" />
+          <h2 className="text-2xl font-heading font-black tracking-wider text-white uppercase flex items-center gap-2">
+            <Scale className="w-5 h-5 text-[#ffb60e]" />
             Integrity & Dispute Desk
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5 font-sans">
             Log and adjudicate team protests, elimination credit challenges, or rule infractions
           </p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white rounded-lg shadow-md shadow-amber-600/20 transition-all"
+          className="tactical-btn-gold px-4 py-2 font-heading font-black tracking-wider uppercase text-xs shadow-lg shadow-[#ffb60e]/15 flex items-center gap-1.5"
         >
-          <PlusCircle className="w-3.5 h-3.5" />
+          <PlusCircle className="w-4 h-4" />
           File Squad Protest
         </button>
       </div>
@@ -113,10 +113,10 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
       {/* Disputes List */}
       <div className="space-y-3">
         {disputes.length === 0 ? (
-          <div className="text-center py-12 bg-slate-900 border border-slate-800 rounded-xl">
+          <div className="text-center py-12 tactical-cut bg-[#101010] border border-white/10">
             <Scale className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-            <p className="text-sm font-bold text-slate-300">No Open Disputes</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-base font-heading font-bold text-slate-300 uppercase tracking-wide">No Open Disputes</p>
+            <p className="text-xs text-slate-500 mt-1 font-sans">
               All protests and inquiries have been resolved.
             </p>
           </div>
@@ -124,40 +124,42 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
           disputes.map((d) => (
             <div
               key={d.id}
-              className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl space-y-3"
+              className="tactical-cut bg-[#121212] border border-white/10 p-4 shadow-xl space-y-3 hover:border-white/20 transition-all"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white text-sm">{d.team?.name}</span>
-                  <span className="text-[10px] text-emerald-400 font-mono">[{d.team?.tag}]</span>
-                  <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono uppercase">
+                  <span className="font-heading text-base font-bold text-white tracking-wide">{d.team?.name}</span>
+                  <span className="tactical-cut bg-[#ffb60e]/15 text-[#ffb60e] font-mono text-[10px] font-bold px-1.5 py-0.5 border border-[#ffb60e]/30">
+                    [{d.team?.tag}]
+                  </span>
+                  <span className="text-[10px] bg-[#1a1a1a] text-slate-300 px-2 py-0.5 tactical-cut font-mono uppercase border border-white/10">
                     {d.category}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span
-                    className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
+                    className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2.5 py-1 tactical-cut ${
                       d.status === 'OPEN'
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        ? 'bg-[#ffb60e]/20 text-[#ffb60e] border border-[#ffb60e]/40'
                         : d.status === 'UNDER_REVIEW'
-                        ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                         : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                     }`}
                   >
                     {d.status}
                   </span>
-                  <span className="text-[11px] text-slate-500 font-mono">
+                  <span className="text-[11px] text-slate-400 font-mono">
                     {new Date(d.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-200">{d.description}</p>
+              <p className="text-xs text-slate-200 font-sans leading-relaxed">{d.description}</p>
 
               {d.resolutionNotes && (
-                <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-xs text-emerald-300 font-mono">
-                  <strong>Resolution:</strong> {d.resolutionNotes} (by {d.resolvedBy || 'Admin'})
+                <div className="p-3 tactical-cut bg-[#0a0a0a] border border-white/10 text-xs text-[#ffb60e] font-mono">
+                  <strong className="text-white">Resolution:</strong> {d.resolutionNotes} (by {d.resolvedBy || 'Admin'})
                 </div>
               )}
 
@@ -171,19 +173,19 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
                         placeholder="Resolution outcome & notes..."
                         value={resolutionNotes}
                         onChange={(e) => setResolutionNotes(e.target.value)}
-                        className="flex-1 bg-slate-950 border border-slate-700 text-white rounded px-2.5 py-1 text-xs"
+                        className="flex-1 bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-1.5 text-xs focus:border-[#ffb60e]"
                       />
                       <select
                         value={resolutionStatus}
                         onChange={(e) => setResolutionStatus(e.target.value)}
-                        className="bg-slate-950 border border-slate-700 text-white rounded px-2 py-1 text-xs"
+                        className="bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-1.5 text-xs focus:border-[#ffb60e]"
                       >
                         <option value="RESOLVED">Accept / Resolve</option>
                         <option value="REJECTED">Reject Protest</option>
                       </select>
                       <button
                         onClick={() => handleResolve(d.id)}
-                        className="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded"
+                        className="tactical-btn-gold px-4 py-1.5 text-xs font-heading font-black tracking-wider uppercase"
                       >
                         Submit
                       </button>
@@ -191,7 +193,7 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
                   ) : (
                     <button
                       onClick={() => setResolvingId(d.id)}
-                      className="px-3 py-1 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700"
+                      className="px-3 py-1 text-xs font-heading font-black uppercase tracking-wider bg-[#1c1c1c] hover:bg-[#282828] text-slate-200 tactical-cut border border-white/10 transition-all"
                     >
                       Adjudicate / Resolve
                     </button>
@@ -205,22 +207,22 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
 
       {/* File Dispute Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Scale className="w-5 h-5 text-amber-300" />
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="tactical-cut bg-[#121212] border border-white/10 max-w-md w-full p-6 shadow-2xl space-y-4">
+            <h3 className="text-xl font-heading font-black text-white flex items-center gap-2 uppercase tracking-wide">
+              <Scale className="w-5 h-5 text-[#ffb60e]" />
               File Squad Protest / Dispute
             </h3>
 
             <form onSubmit={handleFileDispute} className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Protesting Squad *
                 </label>
                 <select
                   value={form.teamId}
                   onChange={(e) => setForm({ ...form, teamId: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:border-[#ffb60e]"
                 >
                   <option value="">-- Choose Squad --</option>
                   {teams.map((t) => (
@@ -232,13 +234,13 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Associated Match
                 </label>
                 <select
                   value={form.matchId}
                   onChange={(e) => setForm({ ...form, matchId: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:border-[#ffb60e]"
                 >
                   <option value="">General Tournament</option>
                   {matches.map((m) => (
@@ -250,11 +252,11 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Category</label>
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">Category</label>
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:border-[#ffb60e]"
                 >
                   <option value="SCORING">Scoring / Elimination Credit</option>
                   <option value="ROSTER">Unauthorized Substitute / Roster Swap</option>
@@ -264,7 +266,7 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Protest Description *
                 </label>
                 <textarea
@@ -272,21 +274,21 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="Detail the issue, player IGNs involved, and timestamp..."
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:border-[#ffb60e]"
                 />
               </div>
 
-              <div className="pt-3 border-t border-slate-800 flex justify-end gap-2">
+              <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
+                  className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white uppercase font-mono"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white rounded-lg shadow-sm"
+                  className="tactical-btn-gold px-5 py-2 text-xs font-heading font-black tracking-wider uppercase shadow-md shadow-[#ffb60e]/20"
                 >
                   Submit Dispute
                 </button>

@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { TournamentCreateSchema } from '@/lib/validation/schemas';
 import { BGIS_10_POINT_SYSTEM } from '@/lib/scoring/presets';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET() {
   try {
@@ -17,12 +17,9 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ success: true, data: tournaments });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch tournaments' } },
-      { status: 500 }
-    );
+    return apiSuccess(tournaments);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch tournaments', '/api/tournaments');
   }
 }
 
@@ -86,11 +83,8 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, data: tournament }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to create tournament' } },
-      { status: 400 }
-    );
+    return apiSuccess(tournament, { status: 201 });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to create tournament', '/api/tournaments');
   }
 }

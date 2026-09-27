@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60" fill="none">
+  <!-- Tactical background shield -->
+  <path d="M10 5 L190 5 L175 55 L25 55 Z" fill="#121212" stroke="#ffb60e" stroke-width="2"/>
+  <path d="M15 10 L185 10 L172 50 L28 50 Z" fill="#1a1a1a"/>
+  
+  <!-- Left Accent Flag -->
+  <polygon points="10,5 25,5 15,55 0,55" fill="#ffb60e"/>
+  
+  <!-- Right Accent Cuts -->
+  <polygon points="190,5 200,5 185,55 175,55" fill="#ffb60e"/>
+  
+  <!-- Crossed Lines / Target mark -->
+  <circle cx="48" cy="30" r="14" stroke="#ffb60e" stroke-width="2" stroke-dasharray="4 2" fill="none"/>
+  <circle cx="48" cy="30" r="4" fill="#ffb60e"/>
+  <line x1="48" y1="12" x2="48" y2="48" stroke="#ffb60e" stroke-width="1.5"/>
+  <line x1="30" y1="30" x2="66" y2="30" stroke="#ffb60e" stroke-width="1.5"/>
+  
+  <!-- Text: BGMI -->
+  <text x="75" y="38" font-family="'Teko', 'Impact', sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="3">
+    BG<tspan fill="#ffb60e">MI</tspan>
+  </text>
+  
+  <!-- Sub-label: ESPORTS -->
+  <text x="77" y="47" font-family="'Roboto Condensed', sans-serif" font-size="8" font-weight="700" fill="#aaaaaa" letter-spacing="4">
+    TOURNAMENTS
+  </text>
+</svg>

@@ -1,6 +1,8 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { generateMatchSchedule } from '@/lib/tournament/engine';
+import { MatchCreateSchema, MatchBatchScheduleSchema } from '@/lib/validation/schemas';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
+import { canViewerSeeRoomPassword, maskRoomPasswordIfNeeded } from '@/lib/services/auth-helper';
 
 export async function GET(
   req: Request,
@@ -27,12 +29,15 @@ export async function GET(
       orderBy: { matchNumber: 'asc' },
     });
 
-    return NextResponse.json({ success: true, data: matches });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch matches' } },
-      { status: 500 }
-    );
+    const canSeePasswords = canViewerSeeRoomPassword(req);
+    const sanitizedMatches = matches.map((m) => ({
+      ...m,
+      room: maskRoomPasswordIfNeeded(m.room, canSeePasswords),
+    }));
+
+    return apiSuccess(sanitizedMatches);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch matches', `/api/tournaments/${params.id}/matches`);
   }
 }
 
@@ -45,14 +50,15 @@ export async function POST(
 
     // Check if bulk generation is requested
     if (body.generateBatch) {
+      const validatedBatch = MatchBatchScheduleSchema.parse(body);
       const {
-        matchCount = 4,
+        matchCount,
         startTime = new Date(),
-        matchDurationMinutes = 30,
-        breakDurationMinutes = 15,
-        maps = ['ERANGEL', 'MIRAMAR', 'SANHOK', 'VIKENDI'],
+        matchDurationMinutes,
+        breakDurationMinutes,
+        maps,
         groupIds,
-      } = body;
+      } = validatedBatch;
 
       const slots = generateMatchSchedule({
         tournamentId: params.id,
@@ -99,34 +105,32 @@ export async function POST(
         },
       });
 
-      return NextResponse.json({ success: true, data: createdMatches }, { status: 201 });
+      const canSeePasswords = canViewerSeeRoomPassword(req);
+      const sanitized = createdMatches.map((m) => ({
+        ...m,
+        room: maskRoomPasswordIfNeeded(m.room, canSeePasswords),
+      }));
+
+      return apiSuccess(sanitized, { status: 201 });
     }
 
     // Single match creation
-    const {
-      matchNumber,
-      title,
-      map = 'ERANGEL',
-      perspective = 'TPP',
-      scheduledStartTime,
-      groupId,
-      roomName,
-    } = body;
+    const validated = MatchCreateSchema.parse(body);
 
     const match = await db.match.create({
       data: {
         tournamentId: params.id,
-        groupId,
-        matchNumber: matchNumber || 1,
-        title: title || `Match #${matchNumber || 1} - ${map}`,
-        map,
-        perspective,
-        scheduledStartTime: new Date(scheduledStartTime || Date.now()),
+        groupId: validated.groupId,
+        matchNumber: validated.matchNumber || 1,
+        title: validated.title || `Match #${validated.matchNumber || 1} - ${validated.map}`,
+        map: validated.map,
+        perspective: validated.perspective,
+        scheduledStartTime: new Date(validated.scheduledStartTime || Date.now()),
         status: 'SCHEDULED',
         resultStatus: 'DRAFT',
         room: {
           create: {
-            roomName: roomName || `BGMI-ROOM-${matchNumber || 1}`,
+            roomName: validated.roomName || `BGMI-ROOM-${validated.matchNumber || 1}`,
             status: 'NOT_CREATED',
           },
         },
@@ -134,11 +138,24 @@ export async function POST(
       include: { room: true },
     });
 
-    return NextResponse.json({ success: true, data: match }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to create match' } },
-      { status: 400 }
-    );
+    await db.auditLog.create({
+      data: {
+        tournamentId: params.id,
+        action: 'MATCH_CREATED',
+        entityType: 'Match',
+        entityId: match.id,
+        reason: `Created match #${match.matchNumber} (${match.map})`,
+      },
+    });
+
+    const canSeePasswords = canViewerSeeRoomPassword(req);
+    const sanitizedMatch = {
+      ...match,
+      room: maskRoomPasswordIfNeeded(match.room, canSeePasswords),
+    };
+
+    return apiSuccess(sanitizedMatch, { status: 201 });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to create match', `/api/tournaments/${params.id}/matches`);
   }
 }

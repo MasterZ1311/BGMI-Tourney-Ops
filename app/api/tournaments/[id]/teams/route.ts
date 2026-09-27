@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { TeamCreateSchema } from '@/lib/validation/schemas';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -31,12 +31,9 @@ export async function GET(
       orderBy: { name: 'asc' },
     });
 
-    return NextResponse.json({ success: true, data: teams });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch teams' } },
-      { status: 500 }
-    );
+    return apiSuccess(teams);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch teams', `/api/tournaments/${params.id}/teams`);
   }
 }
 
@@ -47,6 +44,64 @@ export async function POST(
   try {
     const body = await req.json();
     const validated = TeamCreateSchema.parse(body);
+
+    // 1. Check duplicate team name in tournament
+    const existingTeam = await db.team.findFirst({
+      where: {
+        tournamentId: params.id,
+        name: { equals: validated.name },
+      },
+    });
+
+    if (existingTeam) {
+      return apiError(`A team with name "${validated.name}" is already registered in this tournament.`, {
+        status: 409,
+        code: 'DUPLICATE_TEAM_NAME',
+        path: `/api/tournaments/${params.id}/teams`,
+      });
+    }
+
+    // 2. Validate roster uniqueness for Character IDs
+    if (validated.players && validated.players.length > 0) {
+      const inputCharacterIds = validated.players.map((p) => p.characterId);
+      const uniqueInputIds = new Set(inputCharacterIds);
+      if (uniqueInputIds.size !== inputCharacterIds.length) {
+        return apiError('Duplicate player Character ID detected within the submitted roster.', {
+          status: 422,
+          code: 'DUPLICATE_ROSTER_UID',
+          path: `/api/tournaments/${params.id}/teams`,
+        });
+      }
+
+      // Check existing player UIDs in this tournament across active teams
+      const existingPlayersWithSameUid = await db.player.findMany({
+        where: {
+          characterId: { in: inputCharacterIds },
+          team: {
+            tournamentId: params.id,
+            status: 'ACTIVE',
+          },
+        },
+        include: { team: { select: { name: true, tag: true } } },
+      });
+
+      if (existingPlayersWithSameUid.length > 0) {
+        const conflict = existingPlayersWithSameUid[0];
+        return apiError(
+          `Player UID ${conflict.characterId} (${conflict.ign}) is already active on team "${conflict.team.name}".`,
+          {
+            status: 409,
+            code: 'CHARACTER_ID_CONFLICT',
+            details: existingPlayersWithSameUid.map((p) => ({
+              characterId: p.characterId,
+              ign: p.ign,
+              existingTeam: p.team.name,
+            })),
+            path: `/api/tournaments/${params.id}/teams`,
+          }
+        );
+      }
+    }
 
     const team = await db.team.create({
       data: {
@@ -76,7 +131,7 @@ export async function POST(
       },
     });
 
-    // Default attendance
+    // Default attendance record
     await db.attendance.create({
       data: {
         tournamentId: params.id,
@@ -92,15 +147,12 @@ export async function POST(
         entityType: 'Team',
         entityId: team.id,
         afterState: JSON.stringify({ name: team.name, tag: team.tag }),
-        reason: 'Team registered manually',
+        reason: 'Team registered manually with roster',
       },
     });
 
-    return NextResponse.json({ success: true, data: team }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to create team' } },
-      { status: 400 }
-    );
+    return apiSuccess(team, { status: 201 });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to create team', `/api/tournaments/${params.id}/teams`);
   }
 }

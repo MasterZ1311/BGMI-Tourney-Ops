@@ -108,12 +108,12 @@ export function GroupManagementView({ tournamentId }: { tournamentId: string }) 
       {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Grid className="w-5 h-5 text-emerald-400" />
-            Group & Lobby Allocation
+          <h2 className="text-3xl font-teko uppercase font-bold tracking-wider text-white flex items-center gap-2 leading-none">
+            <Grid className="w-6 h-6 text-[#ffb60e]" />
+            GROUP & LOBBY ALLOCATION
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Organize squads into balanced lobbies with seeded deterministic randomizer
+          <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-1">
+            ORGANIZE SQUADS INTO BALANCED LOBBIES WITH SEEDED DETERMINISTIC RANDOMIZER
           </p>
         </div>
 
@@ -121,29 +121,29 @@ export function GroupManagementView({ tournamentId }: { tournamentId: string }) 
           <button
             onClick={handleRandomize}
             disabled={isRandomizing || anyGroupLocked || groups.length === 0}
-            className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-condensed uppercase font-bold tracking-wider bg-[#222222] hover:bg-[#2a2a2a] text-[#ffb60e] border border-[#ffb60e]/40 tactical-cut transition-colors disabled:opacity-50"
             title={anyGroupLocked ? 'Unlock groups before randomizing' : 'Randomize teams'}
           >
-            <Shuffle className={`w-3.5 h-3.5 text-emerald-400 ${isRandomizing ? 'animate-spin' : ''}`} />
-            {isRandomizing ? 'Shuffling...' : 'Randomize Groups'}
+            <Shuffle className={`w-3.5 h-3.5 text-[#ffb60e] ${isRandomizing ? 'animate-spin' : ''}`} />
+            {isRandomizing ? 'SHUFFLING...' : 'RANDOMIZE GROUPS'}
           </button>
 
           <button
             onClick={() => toggleGroupLock(!anyGroupLocked)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg transition-colors ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-condensed uppercase font-bold tracking-wider tactical-cut transition-colors ${
               anyGroupLocked
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
-                : 'bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700'
+                ? 'bg-[#ffb60e] text-black font-black shadow-md shadow-[#ffb60e]/20'
+                : 'bg-[#222222] text-gray-300 border border-[#444444] hover:bg-[#2a2a2a]'
             }`}
           >
             {anyGroupLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
-            {anyGroupLocked ? 'Groups Locked' : 'Lock Groups'}
+            {anyGroupLocked ? 'GROUPS LOCKED' : 'LOCK GROUPS'}
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="p-3 rounded-lg bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300">
+        <div className="p-3 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-condensed font-bold">
           {error}
         </div>
       )}
@@ -155,14 +155,14 @@ export function GroupManagementView({ tournamentId }: { tournamentId: string }) 
           placeholder="New Group Name (e.g. Group C)..."
           value={newGroupName}
           onChange={(e) => setNewGroupName(e.target.value)}
-          className="flex-1 max-w-xs bg-slate-900 border border-slate-800 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="flex-1 max-w-xs bg-[#171716] border border-[#333333] text-white px-3 py-2 text-xs font-condensed font-bold uppercase focus:border-[#ffb60e] focus:outline-none"
         />
         <button
           type="submit"
-          className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors"
+          className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-4 py-2 flex items-center gap-1.5 text-base shadow-md shadow-[#ffb60e]/20"
         >
-          <PlusCircle className="w-3.5 h-3.5" />
-          Add Group
+          <PlusCircle className="w-4 h-4 text-black" />
+          ADD GROUP
         </button>
       </form>
 
@@ -171,7 +171,7 @@ export function GroupManagementView({ tournamentId }: { tournamentId: string }) 
         {groups.map((group) => (
           <div
             key={group.id}
-            className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl space-y-3"
+            className="bg-[#171716] border border-[#333333] tactical-cut p-4 shadow-2xl space-y-3"
           >
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">

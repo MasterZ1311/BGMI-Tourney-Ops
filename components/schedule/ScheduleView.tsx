@@ -46,7 +46,7 @@ export function ScheduleView({
   }, [tournamentId]);
 
   const handleGenerateBatch = async () => {
-    if (!confirm('Generate 4 sequential BGMI matches with standard Erangel, Miramar, Sanhok, Vikendi map rotation?')) return;
+    if (!confirm('Generate 5 sequential BGMI matches with full Erangel, Miramar, Sanhok, Vikendi, Rondo map rotation?')) return;
     setIsGenerating(true);
     setError(null);
 
@@ -56,11 +56,11 @@ export function ScheduleView({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           generateBatch: true,
-          matchCount: 4,
+          matchCount: 5,
           startTime: new Date().toISOString(),
           matchDurationMinutes: 30,
           breakDurationMinutes: 15,
-          maps: ['ERANGEL', 'MIRAMAR', 'SANHOK', 'VIKENDI'],
+          maps: ['ERANGEL', 'MIRAMAR', 'SANHOK', 'VIKENDI', 'RONDO'],
         }),
       });
 
@@ -82,22 +82,22 @@ export function ScheduleView({
       {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-emerald-400" />
-            Match Scheduler & Timeline
+          <h2 className="text-2xl font-teko uppercase font-bold tracking-wider text-white flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-[#ffb60e]" />
+            MATCH SCHEDULER & TIMELINE
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Timetable with automated map rotations and conflict-free room slots
+          <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-0.5">
+            TIMETABLE WITH AUTOMATED MAP ROTATIONS (ERANGEL, MIRAMAR, SANHOK, VIKENDI, RONDO) AND CONFLICT-FREE SLOTS
           </p>
         </div>
 
         <button
           onClick={handleGenerateBatch}
           disabled={isGenerating}
-          className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-md shadow-emerald-500/20 transition-all disabled:opacity-50"
+          className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-4 py-2 flex items-center gap-1.5 text-base shadow-lg shadow-[#ffb60e]/20 disabled:opacity-50"
         >
-          <PlusCircle className="w-3.5 h-3.5" />
-          {isGenerating ? 'Generating...' : 'Batch Generate Schedule'}
+          <PlusCircle className="w-4 h-4 text-black" />
+          {isGenerating ? 'GENERATING...' : 'BATCH GENERATE SCHEDULE (5 MAPS)'}
         </button>
       </div>
 
@@ -110,77 +110,88 @@ export function ScheduleView({
       {/* Match Timeline Cards */}
       <div className="space-y-3">
         {matches.length === 0 ? (
-          <div className="text-center py-12 bg-slate-900 border border-slate-800 rounded-xl">
-            <Calendar className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-            <p className="text-sm font-bold text-slate-300">No Matches Scheduled</p>
-            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-              Generate a sequential timetable or add matches manually to begin lobby operations.
+          <div className="text-center py-12 bg-[#171716] border border-[#333333] tactical-cut">
+            <Calendar className="w-10 h-10 text-gray-600 mx-auto mb-2" />
+            <p className="text-base font-teko uppercase font-bold text-gray-300">NO MATCHES SCHEDULED</p>
+            <p className="text-xs font-condensed uppercase tracking-wider text-gray-500 mt-1 max-w-sm mx-auto">
+              GENERATE A SEQUENTIAL TIMETABLE OR ADD MATCHES MANUALLY TO BEGIN LOBBY OPERATIONS.
             </p>
           </div>
         ) : (
           matches.map((match) => (
             <div
               key={match.id}
-              className={`p-4 rounded-xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+              className={`relative overflow-hidden p-4 border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 tactical-cut ${
                 match.status === 'LIVE'
-                  ? 'bg-slate-900/90 border-emerald-500/50 shadow-lg shadow-emerald-500/10'
-                  : 'bg-slate-900 border-slate-800'
+                  ? 'bg-[#171716] border-l-4 border-l-[#ffb60e] border-[#333333] shadow-lg shadow-[#ffb60e]/10'
+                  : 'bg-[#171716] border-[#333333] hover:border-gray-600'
               }`}
             >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-center">
-                  <span className="text-[10px] uppercase font-bold text-slate-500">Slot</span>
-                  <span className="text-base font-black text-emerald-400">#{match.matchNumber}</span>
+              {/* Dynamic Map Background Artwork */}
+              <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+                <img
+                  src={`/images/maps/${match.map.toLowerCase()}.jpg`}
+                  alt=""
+                  className="w-full h-full object-cover object-center"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/80 to-transparent" />
+              </div>
+
+              <div className="relative z-10 flex items-start gap-4">
+                <div className="w-14 h-14 bg-[#121212] border border-[#333333] flex flex-col items-center justify-center text-center tactical-cut">
+                  <span className="text-[10px] uppercase font-condensed font-bold text-gray-500">SLOT</span>
+                  <span className="text-2xl font-teko font-bold text-[#ffb60e] leading-none">#{match.matchNumber}</span>
                 </div>
 
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-white">{match.title}</h3>
+                  <div className="flex items-center gap-2.5">
+                    <h3 className="text-base font-teko uppercase font-bold tracking-wider text-white">{match.title}</h3>
                     <span
-                      className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
+                      className={`text-[10px] font-condensed font-black uppercase px-2 py-0.5 tactical-cut ${
                         match.status === 'LIVE'
                           ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
                           : match.status === 'COMPLETED' || match.status === 'VERIFIED'
                           ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                          : 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                          : 'bg-[#ffb60e]/15 text-[#ffb60e] border border-[#ffb60e]/40'
                       }`}
                     >
                       {match.status}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-1 font-mono">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-slate-500" />
-                      {match.map} ({match.perspective})
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400 mt-1 font-condensed font-semibold uppercase">
+                    <span className="flex items-center gap-1.5 px-2 py-0.5 bg-[#121212] border border-[#333333] text-gray-300">
+                      <MapPin className="w-3.5 h-3.5 text-[#ffb60e]" />
+                      <strong className="text-white">{match.map}</strong> ({match.perspective})
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                    <span className="flex items-center gap-1.5 px-2 py-0.5 bg-[#121212] border border-[#333333] text-gray-300">
+                      <Clock className="w-3.5 h-3.5 text-gray-500" />
                       {new Date(match.scheduledStartTime).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
                     </span>
-                    <span className="flex items-center gap-1">
-                      <DoorOpen className="w-3.5 h-3.5 text-slate-500" />
-                      {match.room?.roomName || 'Pending'}
+                    <span className="flex items-center gap-1.5 px-2 py-0.5 bg-[#121212] border border-[#333333] text-gray-300">
+                      <DoorOpen className="w-3.5 h-3.5 text-gray-500" />
+                      {match.room?.roomName || 'ROOM PENDING'}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Status & Actions */}
-              <div className="flex items-center gap-3 justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
-                <span className="text-xs font-mono text-slate-400">
-                  Results: <strong className="text-amber-400">{match.resultStatus}</strong>
+              <div className="flex items-center gap-3 justify-end pt-2 md:pt-0 border-t md:border-t-0 border-[#2e2e2e]">
+                <span className="text-xs font-condensed uppercase tracking-wider text-gray-400">
+                  RESULTS: <strong className="text-[#ffb60e] font-bold">{match.resultStatus}</strong>
                 </span>
 
                 {onNavigateTab && (
                   <button
                     onClick={() => onNavigateTab('matches')}
-                    className="px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+                    className="px-4 py-1.5 text-xs font-teko uppercase font-bold tracking-wider bg-[#222222] hover:bg-[#ffb60e] hover:text-black border border-[#444444] text-gray-200 transition-colors tactical-cut text-sm"
                   >
-                    Open Control
+                    OPEN CONTROL
                   </button>
                 )}
               </div>

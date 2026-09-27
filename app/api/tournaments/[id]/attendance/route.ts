@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { AttendanceMarkSchema } from '@/lib/validation/schemas';
+import { AttendanceMarkSchema, AttendanceBulkMarkSchema } from '@/lib/validation/schemas';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -37,18 +37,12 @@ export async function GET(
       disqualified: attendanceRecords.filter((r) => r.status === 'DISQUALIFIED').length,
     };
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        records: attendanceRecords,
-        summary,
-      },
+    return apiSuccess({
+      records: attendanceRecords,
+      summary,
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch attendance' } },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch attendance', `/api/tournaments/${params.id}/attendance`);
   }
 }
 
@@ -61,6 +55,7 @@ export async function POST(
 
     // Check if bulk "Mark All Present" action is requested
     if (body.bulkMarkAllPresent) {
+      const validatedBulk = AttendanceBulkMarkSchema.parse(body);
       const teams = await db.team.findMany({
         where: { tournamentId: params.id, status: 'ACTIVE' },
       });
@@ -71,7 +66,7 @@ export async function POST(
             tournamentId: params.id,
             teamId: team.id,
             status: 'PRESENT',
-            checkedInBy: body.checkedInBy || 'Tournament Admin',
+            checkedInBy: validatedBulk.checkedInBy || 'Tournament Admin',
           },
         });
       }
@@ -86,7 +81,7 @@ export async function POST(
         },
       });
 
-      return NextResponse.json({ success: true, data: { updatedCount: teams.length } });
+      return apiSuccess({ updatedCount: teams.length });
     }
 
     // Single team attendance mark
@@ -102,11 +97,18 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({ success: true, data: record });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to mark attendance' } },
-      { status: 400 }
-    );
+    await db.auditLog.create({
+      data: {
+        tournamentId: params.id,
+        action: 'ATTENDANCE_MARKED',
+        entityType: 'Attendance',
+        entityId: record.id,
+        reason: `Team ${validated.teamId} marked as ${validated.status}`,
+      },
+    });
+
+    return apiSuccess(record);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to mark attendance', `/api/tournaments/${params.id}/attendance`);
   }
 }

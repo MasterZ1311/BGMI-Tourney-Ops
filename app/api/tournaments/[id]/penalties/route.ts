@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { PenaltyCreateSchema } from '@/lib/validation/schemas';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -16,12 +16,9 @@ export async function GET(
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({ success: true, data: penalties });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch penalties' } },
-      { status: 500 }
-    );
+    return apiSuccess(penalties);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch penalties', `/api/tournaments/${params.id}/penalties`);
   }
 }
 
@@ -64,11 +61,8 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({ success: true, data: penalty }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to issue penalty' } },
-      { status: 400 }
-    );
+    return apiSuccess(penalty, { status: 201 });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to issue penalty', `/api/tournaments/${params.id}/penalties`);
   }
 }

@@ -50,16 +50,33 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // BGMI specific accents
+        // BGMI & PUBG official brand tokens
+        bgmi: {
+          yellow: "#ffb60e",
+          "yellow-hover": "#ffc83b",
+          "yellow-active": "#d99800",
+          base: "#101010",
+          surface: "#171716",
+          card: "#1c1c1c",
+          elevated: "#222222",
+          border: "#333333",
+          borderStrong: "#555555",
+          muted: "#8d8d8d",
+        },
         esports: {
-          bg: "#090d16",
-          card: "#111827",
-          border: "#1f2937",
-          gold: "#f59e0b",
+          bg: "#101010",
+          card: "#171716",
+          border: "#333333",
+          gold: "#ffb60e",
           green: "#10b981",
-          blue: "#3b82f6",
+          blue: "#06b6d4",
           red: "#ef4444",
         }
+      },
+      fontFamily: {
+        teko: ["Teko", "sans-serif"],
+        condensed: ["Roboto Condensed", "sans-serif"],
+        sans: ["Noto Sans", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

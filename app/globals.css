@@ -1,56 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,400&family=Teko:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: 222 47% 6%;
-  --foreground: 210 40% 98%;
-  --card: 222 47% 10%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222 47% 9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 160 84% 39%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 217 33% 17%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217 33% 14%;
-  --muted-foreground: 215 20% 65%;
-  --accent: 217 33% 17%;
-  --accent-foreground: 210 40% 98%;
+  --background: 0 0% 6%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 8%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 42 100% 53%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 14%;
+  --muted-foreground: 0 0% 65%;
+  --accent: 42 100% 53%;
+  --accent-foreground: 0 0% 0%;
   --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217 33% 18%;
-  --input: 217 33% 18%;
-  --ring: 160 84% 39%;
-  --radius: 0.5rem;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --ring: 42 100% 53%;
+  --radius: 0.25rem;
+
+  /* Official PUBG / BGMI Brand Tokens */
+  --pubg-gold: #ffb60e;
+  --pubg-gold-hover: #ffc83b;
+  --pubg-gold-active: #d99800;
+  --pubg-carbon-base: #101010;
+  --pubg-asphalt-surface: #171716;
+  --pubg-card-elevated: #1f1f1f;
+  --pubg-border-subtle: #333333;
+  --pubg-border-accent: #ffb60e;
 }
 
 body {
-  background-color: #090d16;
-  color: #f1f5f9;
+  background-color: #101010;
+  color: #f2f2f2;
+  font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
-/* Custom scrollbars for dense esports tables */
+/* Authentic PUBG / BGMI Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #111111;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
-  border-radius: 3px;
+  background-color: #ffb60e;
+  border-radius: 0px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background-color: #ffc83b;
 }
 
-.esports-glow {
-  box-shadow: 0 0 20px -5px rgba(16, 185, 129, 0.2);
+/* Tactical Cut Corners */
+.tactical-cut {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
 }
 
-.esports-border-gold {
-  border-color: rgba(245, 158, 11, 0.4);
+.tactical-cut-tr {
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+
+.tactical-cut-br {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+
+/* Hazard Warning Bar */
+.tactical-hazard-bar {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffb60e,
+    #ffb60e 10px,
+    #000000 10px,
+    #000000 20px
+  );
+}
+
+/* Tactical Buttons & Glows */
+.tactical-btn-gold {
+  background-color: #ffb60e;
+  color: #000000;
+  font-family: 'Teko', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.15s ease-in-out;
+  border: none;
+}
+.tactical-btn-gold:hover {
+  background-color: #ffc83b;
+  box-shadow: 0 0 15px rgba(255, 182, 14, 0.4);
+}
+
+.pubg-glow {
+  box-shadow: 0 0 20px -3px rgba(255, 182, 14, 0.35);
+}
+
+.pubg-border-gold {
+  border-color: #ffb60e;
 }

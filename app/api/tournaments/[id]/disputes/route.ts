@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DisputeCreateSchema } from '@/lib/validation/schemas';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -16,12 +16,9 @@ export async function GET(
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({ success: true, data: disputes });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch disputes' } },
-      { status: 500 }
-    );
+    return apiSuccess(disputes);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch disputes', `/api/tournaments/${params.id}/disputes`);
   }
 }
 
@@ -58,11 +55,8 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({ success: true, data: dispute }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to file dispute' } },
-      { status: 400 }
-    );
+    return apiSuccess(dispute, { status: 201 });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to file dispute', `/api/tournaments/${params.id}/disputes`);
   }
 }

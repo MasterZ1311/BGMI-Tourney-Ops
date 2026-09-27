@@ -7,7 +7,9 @@ import {
   XCircle,
   CheckCircle,
   FileText,
-  UserAlert,
+  AlertTriangle,
+  ShieldAlert,
+  Loader2,
 } from 'lucide-react';
 
 export function PenaltyManagementView({ tournamentId }: { tournamentId: string }) {
@@ -29,6 +31,7 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
 
   const fetchData = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const [pRes, tRes, mRes] = await Promise.all([
         fetch(`/api/tournaments/${tournamentId}/penalties`).then((r) => r.json()),
@@ -39,8 +42,9 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
       if (pRes.success) setPenalties(pRes.data);
       if (tRes.success) setTeams(tRes.data);
       if (mRes.success) setMatches(mRes.data);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError('Unable to fetch tournament penalty ledger.');
     } finally {
       setIsLoading(false);
     }
@@ -106,89 +110,118 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <AlertOctagon className="w-5 h-5 text-rose-400" />
+          <h2 className="text-2xl font-heading font-black tracking-wider text-white uppercase flex items-center gap-2">
+            <AlertOctagon className="w-5 h-5 text-rose-500" />
             Tournament Penalty Ledger
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5 font-sans">
             Deduct points for late lobby arrivals, unauthorized roster substitutions, or rulebook violations
           </p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-lg shadow-md shadow-rose-600/20 transition-all"
+          className="tactical-cut bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 font-heading font-black tracking-wider uppercase text-xs shadow-lg shadow-rose-600/20 transition-all flex items-center gap-1.5"
         >
-          <PlusCircle className="w-3.5 h-3.5" />
+          <PlusCircle className="w-4 h-4" />
           Issue Penalty
         </button>
       </div>
 
+      {/* Error Banner */}
+      {error && !isModalOpen && (
+        <div className="p-3 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 flex items-center justify-between font-mono">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={fetchData}
+            className="px-2.5 py-1 text-[11px] font-bold bg-rose-500/30 hover:bg-rose-500/50 text-white tactical-cut transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Penalties Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+      <div className="tactical-cut bg-[#101010] border border-white/10 overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px] bg-slate-950/60">
-                <th className="py-3 px-4">Penalized Squad</th>
-                <th className="py-3 px-4">Associated Match</th>
-                <th className="py-3 px-4 text-center">Deduction</th>
-                <th className="py-3 px-4">Violation Reason</th>
-                <th className="py-3 px-4">Issued By</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+              <tr className="border-b border-white/10 text-slate-400 font-mono text-[11px] bg-[#0a0a0a] uppercase tracking-wider">
+                <th className="py-3.5 px-4 font-bold">Penalized Squad</th>
+                <th className="py-3.5 px-4 font-bold">Associated Match</th>
+                <th className="py-3.5 px-4 font-bold text-center">Deduction</th>
+                <th className="py-3.5 px-4 font-bold">Violation Reason</th>
+                <th className="py-3.5 px-4 font-bold">Issued By</th>
+                <th className="py-3.5 px-4 font-bold">Status</th>
+                <th className="py-3.5 px-4 font-bold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-medium">
-              {penalties.length === 0 ? (
+            <tbody className="divide-y divide-white/5 font-medium">
+              {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-500">
-                    No active penalties issued. Tournament integrity record is clean.
+                  <td colSpan={7} className="py-12 text-center text-slate-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Loader2 className="w-5 h-5 text-[#ffb60e] animate-spin" />
+                      <span className="text-xs font-mono text-[#ffb60e]">LOADING PENALTY LEDGER...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : penalties.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-10 text-center text-slate-500">
+                    <div className="flex flex-col items-center justify-center gap-1.5">
+                      <ShieldAlert className="w-8 h-8 text-[#ffb60e]/50 mb-1" />
+                      <span className="font-heading text-lg font-bold text-slate-200 uppercase tracking-wide">Clean Integrity Record</span>
+                      <span className="text-xs text-slate-500 font-sans">No active penalties issued. Tournament integrity record is clean.</span>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 penalties.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={p.id} className="hover:bg-white/[0.03] transition-colors">
+                    <td className="py-3.5 px-4">
                       <div>
-                        <span className="font-bold text-white">{p.team?.name}</span>
-                        <span className="text-[10px] text-emerald-400 font-mono ml-1.5">
+                        <span className="font-heading text-base font-bold text-white tracking-wide">{p.team?.name}</span>
+                        <span className="tactical-cut bg-[#ffb60e]/15 text-[#ffb60e] font-mono text-[10px] font-bold px-1.5 py-0.5 ml-1.5 border border-[#ffb60e]/30">
                           [{p.team?.tag}]
                         </span>
                       </div>
                     </td>
 
-                    <td className="py-3 px-4 font-mono text-slate-400">
+                    <td className="py-3.5 px-4 font-mono text-slate-300">
                       {p.match?.title || 'General Tournament'}
                     </td>
 
-                    <td className="py-3 px-4 text-center font-mono font-black text-rose-400 text-sm">
-                      -{p.pointsDeducted} pts
+                    <td className="py-3.5 px-4 text-center font-heading font-black text-rose-500 text-lg">
+                      -{p.pointsDeducted} PTS
                     </td>
 
-                    <td className="py-3 px-4 text-slate-300 max-w-xs">{p.reason}</td>
+                    <td className="py-3.5 px-4 text-slate-300 max-w-xs">{p.reason}</td>
 
-                    <td className="py-3 px-4 font-mono text-slate-400 text-[11px]">
+                    <td className="py-3.5 px-4 font-mono text-slate-400 text-[11px]">
                       {p.issuedBy}
                     </td>
 
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span
-                        className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
+                        className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2.5 py-1 tactical-cut ${
                           p.status === 'ACTIVE'
                             ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
-                            : 'bg-slate-800 text-slate-400'
+                            : 'bg-[#1a1a1a] text-slate-400 border border-white/10'
                         }`}
                       >
                         {p.status}
                       </span>
                     </td>
 
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       {p.status === 'ACTIVE' && (
                         <button
                           onClick={() => handleVoidPenalty(p.id)}
-                          className="px-2.5 py-1 text-[10px] font-bold uppercase bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition-colors"
+                          className="px-3 py-1 text-[10px] font-heading font-black uppercase tracking-wider bg-[#1c1c1c] hover:bg-[#282828] text-slate-300 tactical-cut border border-white/10 transition-colors"
                         >
                           Void Penalty
                         </button>
@@ -204,28 +237,28 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
 
       {/* Issue Penalty Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <AlertOctagon className="w-5 h-5 text-rose-400" />
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="tactical-cut bg-[#121212] border border-white/10 max-w-md w-full p-6 shadow-2xl space-y-4">
+            <h3 className="text-xl font-heading font-black text-white flex items-center gap-2 uppercase tracking-wide">
+              <AlertOctagon className="w-5 h-5 text-rose-500" />
               Issue Penalty to Squad
             </h3>
 
             {error && (
-              <div className="p-2.5 rounded bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300">
+              <div className="p-2.5 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-mono">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleIssuePenalty} className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Select Squad *
                 </label>
                 <select
                   value={form.teamId}
                   onChange={(e) => setForm({ ...form, teamId: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:border-[#ffb60e]"
                 >
                   <option value="">-- Choose Squad --</option>
                   {teams.map((t) => (
@@ -237,13 +270,13 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Applicable Match (Optional)
                 </label>
                 <select
                   value={form.matchId}
                   onChange={(e) => setForm({ ...form, matchId: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:border-[#ffb60e]"
                 >
                   <option value="">General Tournament Penalty</option>
                   {matches.map((m) => (
@@ -255,7 +288,7 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Points to Deduct *
                 </label>
                 <input
@@ -264,12 +297,12 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
                   step="0.5"
                   value={form.pointsDeducted}
                   onChange={(e) => setForm({ ...form, pointsDeducted: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs font-mono font-bold focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs font-mono font-bold focus:border-[#ffb60e]"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Reason / Rule Violation *
                 </label>
                 <textarea
@@ -277,22 +310,22 @@ export function PenaltyManagementView({ tournamentId }: { tournamentId: string }
                   value={form.reason}
                   onChange={(e) => setForm({ ...form, reason: e.target.value })}
                   placeholder="e.g. Late lobby arrival (Rule 4.2), Unregistered substitute..."
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:border-[#ffb60e]"
                 />
               </div>
 
-              <div className="pt-3 border-t border-slate-800 flex justify-end gap-2">
+              <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
+                  className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white uppercase font-mono"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-lg shadow-sm"
+                  className="px-5 py-2 text-xs font-heading font-black tracking-wider uppercase bg-rose-600 hover:bg-rose-500 text-white tactical-cut shadow-md shadow-rose-600/20"
                 >
                   Apply Deduction
                 </button>

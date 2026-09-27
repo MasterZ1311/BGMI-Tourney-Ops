@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { calculateTournamentLeaderboard } from '@/lib/scoring/engine';
 import { BGIS_10_POINT_SYSTEM } from '@/lib/scoring/presets';
 import { ScoringRuleConfig } from '@/lib/scoring/types';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -19,10 +19,11 @@ export async function GET(
     });
 
     if (!tournament) {
-      return NextResponse.json(
-        { success: false, error: { message: 'Tournament not found' } },
-        { status: 404 }
-      );
+      return apiError('Tournament not found', {
+        status: 404,
+        code: 'NOT_FOUND',
+        path: `/api/tournaments/${params.id}/leaderboard`,
+      });
     }
 
     // Resolve scoring rule
@@ -31,17 +32,21 @@ export async function GET(
       try {
         ruleConfig = {
           name: tournament.scoringRule.name,
-          placementPoints: JSON.parse(tournament.scoringRule.placementPoints),
+          placementPoints: typeof tournament.scoringRule.placementPoints === 'string'
+            ? JSON.parse(tournament.scoringRule.placementPoints)
+            : tournament.scoringRule.placementPoints,
           killPointsPerElim: tournament.scoringRule.killPointsPerElim,
           wwcdBonus: tournament.scoringRule.wwcdBonus,
-          tieBreakers: JSON.parse(tournament.scoringRule.tieBreakers),
+          tieBreakers: typeof tournament.scoringRule.tieBreakers === 'string'
+            ? JSON.parse(tournament.scoringRule.tieBreakers)
+            : tournament.scoringRule.tieBreakers,
         };
       } catch (err) {
-        console.error('Failed to parse scoring rule JSON', err);
+        console.error('Failed to parse scoring rule JSON, using default BGIS 10', err);
       }
     }
 
-    // Fetch teams
+    // Fetch registered squads
     const teams = await db.team.findMany({
       where: {
         tournamentId: params.id,
@@ -64,7 +69,7 @@ export async function GET(
       orderBy: { matchNumber: 'asc' },
     });
 
-    // Format matches for scoring engine
+    // Map match data for authoritative scoring engine input
     const matchScoresFormatted = matches.map((m) => ({
       matchId: m.id,
       matchNumber: m.matchNumber,
@@ -90,7 +95,7 @@ export async function GET(
       select: { teamId: true, pointsDeducted: true, status: true },
     });
 
-    // Compute live leaderboard with tie-breakers
+    // Authoritative delegation: all calculation is executed by pure scoring engine
     const standings = calculateTournamentLeaderboard(
       teams,
       matchScoresFormatted,
@@ -98,19 +103,13 @@ export async function GET(
       ruleConfig
     );
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        tournamentName: tournament.name,
-        totalMatchesCount: matches.length,
-        scoringRuleName: ruleConfig.name,
-        standings,
-      },
+    return apiSuccess({
+      tournamentName: tournament.name,
+      totalMatchesCount: matches.length,
+      scoringRuleName: ruleConfig.name,
+      standings,
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to generate leaderboard' } },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to generate leaderboard', `/api/tournaments/${params.id}/leaderboard`);
   }
 }

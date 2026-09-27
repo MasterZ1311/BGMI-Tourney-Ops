@@ -66,9 +66,9 @@ export default function TournamentWorkspacePage({
   if (isLoading && !tournament) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center space-y-2">
-          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-slate-400 font-mono">Loading BGMI Tournament Data...</p>
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-2 border-[#ffb60e] border-t-transparent rounded-full animate-spin mx-auto shadow-lg shadow-[#ffb60e]/20" />
+          <p className="text-xs text-[#ffb60e] font-mono tracking-widest uppercase">LOADING BGMI TOURNAMENT DATA...</p>
         </div>
       </div>
     );
@@ -77,10 +77,10 @@ export default function TournamentWorkspacePage({
   if (!tournament) {
     return (
       <div className="max-w-md mx-auto py-16 text-center space-y-4">
-        <p className="text-sm font-bold text-slate-200">Tournament Not Found</p>
+        <p className="text-lg font-heading font-black tracking-wider text-slate-200 uppercase">Tournament Not Found</p>
         <button
           onClick={() => router.push('/')}
-          className="px-4 py-2 text-xs font-bold bg-emerald-500 text-white rounded-lg"
+          className="tactical-btn-gold px-6 py-2.5 text-xs uppercase tracking-wider font-heading font-black"
         >
           Return to Control Center
         </button>

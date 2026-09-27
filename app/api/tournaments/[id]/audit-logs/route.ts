@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -12,11 +12,8 @@ export async function GET(
       take: 100,
     });
 
-    return NextResponse.json({ success: true, data: logs });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch audit logs' } },
-      { status: 500 }
-    );
+    return apiSuccess(logs);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch audit logs', `/api/tournaments/${params.id}/audit-logs`);
   }
 }

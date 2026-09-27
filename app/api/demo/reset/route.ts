@@ -1,22 +1,16 @@
-import { NextResponse } from 'next/server';
 import { resetDemoTournament } from '@/lib/seed-service';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
 
 export async function POST() {
   try {
     const tournament = await resetDemoTournament();
-    return NextResponse.json({
-      success: true,
-      data: {
-        tournamentId: tournament.id,
-        name: tournament.name,
-        message: 'Demo tournament cleanly reset to initial match-day state.',
-      },
+    return apiSuccess({
+      tournamentId: tournament.id,
+      name: tournament.name,
+      message: 'Demo tournament cleanly reset to initial match-day state.',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Demo reset error:', error);
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to reset demo data' } },
-      { status: 500 }
-    );
+    return handleRouteError(error, 'Failed to reset demo data', '/api/demo/reset');
   }
 }

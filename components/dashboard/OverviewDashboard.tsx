@@ -15,6 +15,9 @@ import {
   Check,
   AlertTriangle,
   ArrowRight,
+  Eye,
+  EyeOff,
+  Share2,
 } from 'lucide-react';
 import { TournamentTab } from '../shared/TournamentSubNav';
 
@@ -27,6 +30,23 @@ interface OverviewProps {
 export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: OverviewProps) {
   const [copiedId, setCopiedId] = useState(false);
   const [copiedPass, setCopiedPass] = useState(false);
+  const [copiedFormatted, setCopiedFormatted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  if (!tournament) {
+    return (
+      <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center text-slate-400">
+        <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto mb-2" />
+        <p className="font-bold text-white">Tournament data unavailable</p>
+        <button
+          onClick={onRefresh}
+          className="mt-3 px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg"
+        >
+          Refresh
+        </button>
+      </div>
+    );
+  }
 
   // Find live match or next scheduled match
   const liveMatch = tournament.matches?.find((m: any) => m.status === 'LIVE');
@@ -61,28 +81,40 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
     }
   };
 
+  const copyFormattedCredentials = () => {
+    if (!currentMatch?.room) return;
+    const roomId = currentMatch.room.roomId || 'TBD';
+    const password = currentMatch.room.password || 'TBD';
+    const text = `🎮 [BGMI LOBBY CREDENTIALS]\n🏆 ${tournament.name}\n⚔️ Match #${currentMatch.matchNumber} (${currentMatch.map || 'ERANGEL'})\n🆔 Room ID: ${roomId}\n🔑 Password: ${password}\n⏰ Status: ${currentMatch.status}. Join designated squad slot immediately!`;
+    navigator.clipboard.writeText(text);
+    setCopiedFormatted(true);
+    setTimeout(() => setCopiedFormatted(false), 2000);
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Operations Command Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/40 border border-slate-800 rounded-xl p-5 shadow-xl">
+      <div className="bg-[#171716] border border-[#333333] p-5 shadow-2xl relative">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 tactical-cut text-xs font-condensed font-bold uppercase tracking-wider ${
                 tournament.status === 'LIVE'
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse'
-                  : 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
+                  : 'bg-[#ffb60e]/15 text-[#ffb60e] border border-[#ffb60e]/40'
               }`}>
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className={`w-2 h-2 rounded-full ${tournament.status === 'LIVE' ? 'bg-rose-400' : 'bg-[#ffb60e]'}`}></span>
                 {tournament.status}
               </span>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-gray-400 font-condensed font-bold uppercase tracking-wider">
                 {tournament.format.replace(/_/g, ' ')}
               </span>
             </div>
-            <h1 className="text-2xl font-black text-white tracking-tight">{tournament.name}</h1>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Organized by <strong className="text-slate-200">{tournament.organizer}</strong> • Venue: {tournament.venue || 'Online Lobby'}
+            <h1 className="text-3xl font-teko uppercase font-bold tracking-wider text-white leading-none">
+              {tournament.name}
+            </h1>
+            <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-1">
+              ORGANIZED BY <strong className="text-white">{tournament.organizer}</strong> • VENUE: <span className="text-[#ffb60e]">{tournament.venue || 'ONLINE CUSTOM LOBBY'}</span>
             </p>
           </div>
 
@@ -90,42 +122,42 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => onNavigateTab('matches')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold shadow-md shadow-emerald-500/20 transition-all"
+              className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-3.5 py-1.5 flex items-center gap-1.5 text-base shadow-md shadow-[#ffb60e]/20"
             >
-              <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Match Control</span>
+              <Play className="w-3.5 h-3.5 fill-current text-black" />
+              <span>MATCH CONTROL</span>
             </button>
 
             <button
               onClick={() => onNavigateTab('rooms')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all"
+              className="flex items-center gap-2 px-3.5 py-1.5 tactical-cut bg-[#222222] hover:bg-[#2a2a2a] text-[#ffb60e] border border-[#444444] text-xs font-teko uppercase tracking-wider font-bold text-base transition-colors"
             >
-              <DoorOpen className="w-3.5 h-3.5" />
-              <span>Room Ops</span>
+              <DoorOpen className="w-3.5 h-3.5 text-[#ffb60e]" />
+              <span>ROOM OPS</span>
             </button>
 
             <button
               onClick={() => onNavigateTab('scoring')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition-all"
+              className="flex items-center gap-2 px-3.5 py-1.5 tactical-cut bg-[#222222] hover:bg-[#2a2a2a] text-gray-200 border border-[#444444] text-xs font-teko uppercase tracking-wider font-bold text-base transition-colors"
             >
-              <Calculator className="w-3.5 h-3.5" />
-              <span>Score Entry</span>
+              <Calculator className="w-3.5 h-3.5 text-[#ffb60e]" />
+              <span>SCORE ENTRY</span>
             </button>
 
             <button
               onClick={() => onNavigateTab('attendance')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all"
+              className="flex items-center gap-2 px-3.5 py-1.5 tactical-cut bg-[#222222] hover:bg-[#2a2a2a] text-gray-200 border border-[#444444] text-xs font-teko uppercase tracking-wider font-bold text-base transition-colors"
             >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>Attendance</span>
+              <UserCheck className="w-3.5 h-3.5 text-gray-400" />
+              <span>ATTENDANCE</span>
             </button>
 
             <button
               onClick={() => onNavigateTab('leaderboard')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all"
+              className="flex items-center gap-2 px-3.5 py-1.5 tactical-cut bg-[#222222] hover:bg-[#2a2a2a] text-[#ffb60e] border border-[#ffb60e]/40 text-xs font-teko uppercase tracking-wider font-bold text-base transition-colors"
             >
-              <Trophy className="w-3.5 h-3.5" />
-              <span>Leaderboard</span>
+              <Trophy className="w-3.5 h-3.5 text-[#ffb60e]" />
+              <span>LEADERBOARD</span>
             </button>
           </div>
         </div>
@@ -133,80 +165,135 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
 
       {/* Current Match Ticker & Room Card */}
       {currentMatch && (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 relative overflow-hidden">
-          <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500"></div>
+        <div className={`bg-[#171716] border border-[#333333] p-5 relative overflow-hidden tactical-cut ${
+          currentMatch.status === 'LIVE' ? 'border-l-4 border-l-[#ffb60e] shadow-xl shadow-[#ffb60e]/10' : ''
+        }`}>
+          {/* Dynamic Map Background Artwork */}
+          <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+            <img
+              src={`/images/maps/${currentMatch.map.toLowerCase()}.jpg`}
+              alt=""
+              className="w-full h-full object-cover object-center"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/85 to-transparent" />
+          </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {currentMatch.status === 'LIVE' && (
+            <div className="tactical-hazard-bar absolute top-0 left-0 h-1.5 w-full"></div>
+          )}
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex flex-col items-center justify-center text-center">
-                <span className="text-[10px] uppercase font-bold text-slate-400">Match</span>
-                <span className="text-lg font-black text-emerald-400">#{currentMatch.matchNumber}</span>
+              <div className="w-14 h-14 bg-[#101010] border border-[#333333] flex flex-col items-center justify-center text-center tactical-cut">
+                <span className="text-[10px] uppercase font-condensed font-bold text-gray-500">MATCH</span>
+                <span className="text-2xl font-teko font-bold text-[#ffb60e] leading-none">#{currentMatch.matchNumber}</span>
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-white">{currentMatch.title}</h3>
-                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
+                <div className="flex items-center gap-2.5">
+                  <h3 className="text-xl font-teko uppercase font-bold tracking-wider text-white">{currentMatch.title}</h3>
+                  <span className={`text-[10px] font-condensed font-black uppercase px-2 py-0.5 tactical-cut ${
                     currentMatch.status === 'LIVE'
                       ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
-                      : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                      : 'bg-[#ffb60e]/15 text-[#ffb60e] border border-[#ffb60e]/40'
                   }`}>
                     {currentMatch.status}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-slate-400 mt-1 font-mono">
-                  <span>MAP: <strong className="text-slate-200">{currentMatch.map}</strong></span>
-                  <span>MODE: <strong className="text-slate-200">{currentMatch.perspective}</strong></span>
-                  <span>RESULTS: <strong className="text-amber-400">{currentMatch.resultStatus}</strong></span>
+                <div className="flex items-center gap-4 text-xs text-gray-400 mt-1 font-condensed font-bold uppercase tracking-wide">
+                  <span>MAP: <strong className="text-white">{currentMatch.map}</strong></span>
+                  <span>MODE: <strong className="text-white">{currentMatch.perspective}</strong></span>
+                  <span>RESULTS: <strong className="text-[#ffb60e]">{currentMatch.resultStatus}</strong></span>
                 </div>
               </div>
             </div>
 
             {/* Room Credentials Strip */}
             {currentMatch.room && (
-              <div className="flex items-center gap-3 bg-slate-950/80 border border-slate-800 p-3 rounded-lg">
+              <div className="flex items-center gap-3 bg-[#101010] border border-[#333333] p-3 tactical-cut">
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase font-mono">Room ID</p>
+                  <p className="text-[10px] text-gray-500 uppercase font-condensed font-bold">ROOM ID</p>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-sm font-bold text-white">
-                      {currentMatch.room.roomId || 'Pending'}
+                    <span className="font-condensed font-black text-sm text-white tracking-wider">
+                      {currentMatch.room.roomId || 'PENDING'}
                     </span>
                     {currentMatch.room.roomId && (
                       <button
                         onClick={() => copyToClipboard(currentMatch.room.roomId, 'id')}
-                        className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                        className="text-gray-400 hover:text-white p-1 hover:bg-[#222222]"
                         title="Copy Room ID"
                       >
-                        {copiedId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedId ? <Check className="w-3.5 h-3.5 text-[#ffb60e]" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
                     )}
                   </div>
                 </div>
 
-                <div className="h-8 w-px bg-slate-800"></div>
+                <div className="h-8 w-px bg-[#2e2e2e]"></div>
 
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase font-mono">Password</p>
+                  <p className="text-[10px] text-gray-500 uppercase font-condensed font-bold">PASSWORD</p>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-sm font-bold text-amber-400">
-                      {currentMatch.room.password || 'Pending'}
+                    <span className="font-condensed font-black text-sm text-[#ffb60e] tracking-wider">
+                      {currentMatch.room.password
+                        ? showPassword
+                          ? currentMatch.room.password
+                          : '••••••••'
+                        : 'PENDING'}
                     </span>
                     {currentMatch.room.password && (
-                      <button
-                        onClick={() => copyToClipboard(currentMatch.room.password, 'pass')}
-                        className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
-                        title="Copy Password"
-                      >
-                        {copiedPass ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
+                      <>
+                        <button
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="text-gray-400 hover:text-white p-1 hover:bg-[#222222] transition-colors"
+                          title={showPassword ? 'Hide Password' : 'Show Password'}
+                          aria-label={showPassword ? 'Hide Password' : 'Show Password'}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="w-3.5 h-3.5 text-[#ffb60e]" />
+                          ) : (
+                            <Eye className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => copyToClipboard(currentMatch.room.password, 'pass')}
+                          className="text-gray-400 hover:text-white p-1 hover:bg-[#222222] transition-colors"
+                          title="Copy Password"
+                          aria-label="Copy Password"
+                        >
+                          {copiedPass ? <Check className="w-3.5 h-3.5 text-[#ffb60e]" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
+
+                <div className="h-8 w-px bg-[#2e2e2e]"></div>
+
+                {/* 1-Click Formatted Copy for Discord / WhatsApp */}
+                <button
+                  onClick={copyFormattedCredentials}
+                  className="flex items-center gap-1.5 text-xs bg-[#222222] hover:bg-[#2a2a2a] text-gray-200 border border-[#444444] px-3 py-1.5 tactical-cut font-condensed font-bold uppercase tracking-wider transition-all"
+                  title="Copy formatted room message for Discord/WhatsApp"
+                >
+                  {copiedFormatted ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-[#ffb60e]" />
+                      <span className="text-[#ffb60e] font-condensed text-[11px]">COPIED!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-3.5 h-3.5 text-[#ffb60e]" />
+                      <span className="text-[11px] font-condensed">FORMAT COPY</span>
+                    </>
+                  )}
+                </button>
 
                 <button
                   onClick={() => onNavigateTab('matches')}
-                  className="ml-2 text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 px-3 py-1.5 rounded font-semibold transition-colors"
+                  className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-3.5 py-1.5 text-sm"
                 >
-                  Enter Room
+                  ENTER ROOM
                 </button>
               </div>
             )}
@@ -214,82 +301,101 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
         </div>
       )}
 
+      {/* Fallback if no match scheduled */}
+      {!currentMatch && (
+        <div className="bg-slate-900/60 border border-dashed border-slate-800 rounded-xl p-6 text-center">
+          <Clock className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+          <h4 className="text-sm font-bold text-slate-300">No Active or Scheduled Match</h4>
+          <p className="text-xs text-slate-500 mt-1">
+            Generate tournament match fixtures to begin room operations and scorekeeping.
+          </p>
+          <button
+            onClick={() => onNavigateTab('schedule')}
+            className="mt-3 px-3.5 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors"
+          >
+            Go to Schedule
+          </button>
+        </div>
+      )}
+
       {/* 4 Operations Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Teams Metric */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Teams</span>
-            <UserCheck className="w-4 h-4 text-emerald-400" />
+        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+          <div className="flex items-center justify-between text-gray-400 mb-2">
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider">SQUADS</span>
+            <UserCheck className="w-4 h-4 text-[#ffb60e]" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-white">{totalTeams}</span>
-            <span className="text-xs text-emerald-400 font-semibold">{verifiedTeams} Verified</span>
+            <span className="text-3xl font-teko font-bold text-white">{totalTeams}</span>
+            <span className="text-xs text-[#ffb60e] font-condensed font-bold uppercase">{verifiedTeams} VERIFIED</span>
           </div>
-          <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/80">
-            <span>Checked In: <strong className="text-slate-200">{presentCount}</strong></span>
-            <span>Absent: <strong className="text-rose-400">{absentCount}</strong></span>
+          <div className="mt-3 flex items-center justify-between text-[11px] font-condensed text-gray-400 pt-2 border-t border-[#2e2e2e]">
+            <span>CHECKED IN: <strong className="text-white">{presentCount}</strong></span>
+            <span>ABSENT: <strong className="text-rose-400">{absentCount}</strong></span>
           </div>
         </div>
 
         {/* Matches Metric */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Matches</span>
-            <Flame className="w-4 h-4 text-blue-400" />
+        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+          <div className="flex items-center justify-between text-gray-400 mb-2">
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider">MATCHES</span>
+            <Flame className="w-4 h-4 text-[#ffb60e]" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-white">{completedMatches} / {totalMatches}</span>
-            <span className="text-xs text-slate-400">Done</span>
+            <span className="text-3xl font-teko font-bold text-white">{completedMatches} / {totalMatches}</span>
+            <span className="text-xs text-gray-400 font-condensed uppercase font-bold">DONE</span>
           </div>
-          <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/80">
-            <span>Remaining: <strong className="text-slate-200">{remainingMatches}</strong></span>
-            <span className="text-emerald-400 font-medium">
-              {totalMatches > 0 ? Math.round((completedMatches / totalMatches) * 100) : 0}% Complete
+          <div className="mt-3 flex items-center justify-between text-[11px] font-condensed text-gray-400 pt-2 border-t border-[#2e2e2e]">
+            <span>REMAINING: <strong className="text-white">{remainingMatches}</strong></span>
+            <span className="text-[#ffb60e] font-bold">
+              {totalMatches > 0 ? Math.round((completedMatches / totalMatches) * 100) : 0}% COMPLETE
             </span>
           </div>
         </div>
 
         {/* Attendance Metric */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Lobby Check-In</span>
-            <Clock className="w-4 h-4 text-amber-400" />
+        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+          <div className="flex items-center justify-between text-gray-400 mb-2">
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider">LOBBY CHECK-IN</span>
+            <Clock className="w-4 h-4 text-[#ffb60e]" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-white">{presentCount} / {totalTeams}</span>
-            <span className="text-xs text-emerald-400 font-semibold">Present</span>
+            <span className="text-3xl font-teko font-bold text-white">{presentCount} / {totalTeams}</span>
+            <span className="text-xs text-[#ffb60e] font-condensed font-bold uppercase">
+              {totalTeams > 0 ? Math.round((presentCount / totalTeams) * 100) : 0}% RATE
+            </span>
           </div>
-          <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/80">
-            <span>Late: <strong className="text-amber-400">{lateCount}</strong></span>
+          <div className="mt-3 flex items-center justify-between text-[11px] font-condensed text-gray-400 pt-2 border-t border-[#2e2e2e]">
+            <span>LATE: <strong className="text-amber-400">{lateCount}</strong></span>
             <button
               onClick={() => onNavigateTab('attendance')}
-              className="text-emerald-400 hover:underline flex items-center gap-0.5"
+              className="text-[#ffb60e] hover:underline flex items-center gap-0.5 font-bold uppercase"
             >
-              Check-In <ArrowRight className="w-2.5 h-2.5" />
+              CHECK-IN <ArrowRight className="w-2.5 h-2.5" />
             </button>
           </div>
         </div>
 
         {/* Disputes & Penalties Metric */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Integrity Desk</span>
+        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+          <div className="flex items-center justify-between text-gray-400 mb-2">
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider">INTEGRITY DESK</span>
             <ShieldAlert className="w-4 h-4 text-rose-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-white">
+            <span className="text-3xl font-teko font-bold text-white">
               {tournament._count?.disputes || 0}
             </span>
-            <span className="text-xs text-amber-400 font-semibold">Disputes</span>
+            <span className="text-xs text-rose-400 font-condensed font-bold uppercase">DISPUTES</span>
           </div>
-          <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/80">
-            <span>Penalties: <strong className="text-rose-400">{tournament._count?.penalties || 0}</strong></span>
+          <div className="mt-3 flex items-center justify-between text-[11px] font-condensed text-gray-400 pt-2 border-t border-[#2e2e2e]">
+            <span>PENALTIES: <strong className="text-rose-400">{tournament._count?.penalties || 0}</strong></span>
             <button
               onClick={() => onNavigateTab('penalties')}
-              className="text-rose-400 hover:underline flex items-center gap-0.5"
+              className="text-rose-400 hover:underline flex items-center gap-0.5 font-bold uppercase"
             >
-              Review <ArrowRight className="w-2.5 h-2.5" />
+              REVIEW <ArrowRight className="w-2.5 h-2.5" />
             </button>
           </div>
         </div>
@@ -298,98 +404,112 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
       {/* Mini Standings Preview & Quick Operational Links */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Standings Snippet */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div className="lg:col-span-2 bg-[#171716] border border-[#333333] p-5 tactical-cut">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-400" />
-              <h3 className="text-sm font-bold text-white">Live Tournament Standings</h3>
+              <Trophy className="w-5 h-5 text-[#ffb60e]" />
+              <h3 className="text-xl font-teko uppercase font-bold tracking-wider text-white">LIVE TOURNAMENT STANDINGS</h3>
             </div>
             <button
               onClick={() => onNavigateTab('leaderboard')}
-              className="text-xs text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1"
+              className="text-xs font-condensed uppercase font-bold text-[#ffb60e] hover:text-white transition-colors flex items-center gap-1"
             >
-              View Full Leaderboard <ArrowRight className="w-3 h-3" />
+              VIEW FULL LEADERBOARD <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px]">
-                  <th className="py-2 px-3">#</th>
-                  <th className="py-2 px-3">Team</th>
-                  <th className="py-2 px-3 text-center">Matches</th>
-                  <th className="py-2 px-3 text-center">WWCD</th>
-                  <th className="py-2 px-3 text-right">Points</th>
+                <tr className="border-b border-[#2e2e2e] text-gray-400 font-condensed uppercase font-bold text-xs">
+                  <th className="py-2.5 px-3">#</th>
+                  <th className="py-2.5 px-3">TEAM / SQUAD</th>
+                  <th className="py-2.5 px-3 text-center">MATCHES</th>
+                  <th className="py-2.5 px-3 text-center">WWCD</th>
+                  <th className="py-2.5 px-3 text-right">TOTAL POINTS</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 font-medium">
-                {tournament.teams?.slice(0, 6).map((team: any, index: number) => (
-                  <tr key={team.id} className="hover:bg-slate-800/40">
-                    <td className="py-2.5 px-3 font-mono font-bold text-slate-300">
-                      {index === 0 ? <span className="text-amber-400">1</span> : index + 1}
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-white">{team.name}</span>
-                        <span className="text-[10px] text-slate-500 font-mono">[{team.tag}]</span>
+              <tbody className="divide-y divide-[#262626] font-medium font-condensed">
+                {(!tournament.teams || tournament.teams.length === 0) ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-gray-500">
+                      <div className="flex flex-col items-center justify-center gap-1.5">
+                        <Trophy className="w-8 h-8 text-gray-600 mb-1" />
+                        <span className="font-teko uppercase text-base text-gray-400">NO SQUADS REGISTERED YET</span>
+                        <span className="text-xs text-gray-500">Register squads or import teams to see standings preview.</span>
                       </div>
                     </td>
-                    <td className="py-2.5 px-3 text-center text-slate-400">{completedMatches}</td>
-                    <td className="py-2.5 px-3 text-center">
-                      {index === 0 ? (
-                        <span className="inline-flex items-center gap-1 text-amber-400 font-bold">
-                          🍗 1
-                        </span>
-                      ) : index === 2 ? (
-                        <span className="inline-flex items-center gap-1 text-amber-400 font-bold">
-                          🍗 1
-                        </span>
-                      ) : (
-                        <span className="text-slate-500">0</span>
-                      )}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-black font-mono text-emerald-400 text-sm">
-                      {index === 0 ? 35 : index === 1 ? 28 : index === 2 ? 26 : 22 - index * 2}
-                    </td>
                   </tr>
-                ))}
+                ) : (
+                  tournament.teams.slice(0, 6).map((team: any, index: number) => (
+                    <tr key={team.id} className={`hover:bg-[#202020] transition-colors ${
+                      index === 0 ? 'bg-[#ffb60e]/5 border-l-2 border-l-[#ffb60e]' : ''
+                    }`}>
+                      <td className="py-2.5 px-3 font-teko text-base font-bold text-gray-300">
+                        {index === 0 ? <span className="text-[#ffb60e]">#1</span> : `#${index + 1}`}
+                      </td>
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-white text-sm">{team.name}</span>
+                          <span className="text-[10px] text-gray-500 font-condensed font-bold">[{team.tag}]</span>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-3 text-center text-gray-400 font-bold">{completedMatches}</td>
+                      <td className="py-2.5 px-3 text-center">
+                        {index === 0 ? (
+                          <span className="inline-flex items-center gap-1 text-[#ffb60e] font-bold">
+                            🍗 1
+                          </span>
+                        ) : index === 2 ? (
+                          <span className="inline-flex items-center gap-1 text-[#ffb60e] font-bold">
+                            🍗 1
+                          </span>
+                        ) : (
+                          <span className="text-gray-500">0</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-black text-[#ffb60e] text-base">
+                        {index === 0 ? 35 : index === 1 ? 28 : index === 2 ? 26 : 22 - index * 2}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
         {/* Quick Rules & Dispute Window */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
-            Active Match Policies
+        <div className="bg-[#171716] border border-[#333333] p-5 tactical-cut space-y-4">
+          <h3 className="text-xl font-teko uppercase font-bold tracking-wider text-white flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-[#ffb60e]" />
+            ACTIVE MATCH POLICIES
           </h3>
 
-          <div className="space-y-3 text-xs text-slate-300">
-            <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800/80">
-              <span className="text-slate-400 font-semibold block text-[11px] uppercase font-mono">
-                No-Show Grace Period
+          <div className="space-y-3 text-xs text-gray-300 font-condensed font-medium">
+            <div className="p-3 bg-[#101010] border border-[#333333] tactical-cut">
+              <span className="text-[#ffb60e] font-bold block text-[11px] uppercase tracking-wider">
+                NO-SHOW GRACE PERIOD
               </span>
-              <p className="mt-0.5 text-slate-200">
+              <p className="mt-0.5 text-gray-300">
                 {tournament.settings?.noShowGraceMinutes || 10} minutes post room opening. Unfilled slots set to absent.
               </p>
             </div>
 
-            <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800/80">
-              <span className="text-slate-400 font-semibold block text-[11px] uppercase font-mono">
-                Dispute Protest Window
+            <div className="p-3 bg-[#101010] border border-[#333333] tactical-cut">
+              <span className="text-[#ffb60e] font-bold block text-[11px] uppercase tracking-wider">
+                DISPUTE PROTEST WINDOW
               </span>
-              <p className="mt-0.5 text-slate-200">
+              <p className="mt-0.5 text-gray-300">
                 {tournament.settings?.disputeWindowMinutes || 15} minutes following WWCD before scores become irreversible.
               </p>
             </div>
 
-            <div className="p-3 rounded-lg bg-slate-950/80 border border-slate-800/80">
-              <span className="text-slate-400 font-semibold block text-[11px] uppercase font-mono">
-                Scoring Rule
+            <div className="p-3 bg-[#101010] border border-[#333333] tactical-cut">
+              <span className="text-[#ffb60e] font-bold block text-[11px] uppercase tracking-wider">
+                SCORING RULE
               </span>
-              <p className="mt-0.5 text-emerald-400 font-bold">
+              <p className="mt-0.5 text-white font-bold text-sm">
                 {tournament.scoringRule?.name || 'Official BGIS 10-Point System'}
               </p>
             </div>

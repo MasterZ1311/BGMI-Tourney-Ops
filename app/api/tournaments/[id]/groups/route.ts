@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { GroupCreateSchema } from '@/lib/validation/schemas';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -25,12 +26,9 @@ export async function GET(
       orderBy: { name: 'asc' },
     });
 
-    return NextResponse.json({ success: true, data: groups });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch groups' } },
-      { status: 500 }
-    );
+    return apiSuccess(groups);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch groups', `/api/tournaments/${params.id}/groups`);
   }
 }
 
@@ -40,25 +38,27 @@ export async function POST(
 ) {
   try {
     const body = await req.json();
-    if (!body.name) {
-      return NextResponse.json(
-        { success: false, error: { message: 'Group name is required' } },
-        { status: 400 }
-      );
-    }
+    const validated = GroupCreateSchema.parse(body);
 
     const group = await db.group.create({
       data: {
         tournamentId: params.id,
-        name: body.name,
+        name: validated.name,
       },
     });
 
-    return NextResponse.json({ success: true, data: group }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to create group' } },
-      { status: 400 }
-    );
+    await db.auditLog.create({
+      data: {
+        tournamentId: params.id,
+        action: 'GROUP_CREATED',
+        entityType: 'Group',
+        entityId: group.id,
+        reason: `Group "${group.name}" created`,
+      },
+    });
+
+    return apiSuccess(group, { status: 201 });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to create group', `/api/tournaments/${params.id}/groups`);
   }
 }

@@ -25,13 +25,13 @@ export function TournamentWizard() {
   // Form state
   const [formData, setFormData] = useState({
     // Step 1: Info
-    name: 'BGMI Championship 2026',
-    organizer: 'Esports India Guild',
-    description: 'Premier Battle Royale tournament for grassroots and competitive BGMI squads.',
+    name: '',
+    organizer: '',
+    description: '',
     startDate: new Date().toISOString().slice(0, 16),
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
-    venue: 'Online Custom Rooms',
-    contactEmail: 'tournaments@esportsguild.in',
+    venue: '',
+    contactEmail: '',
 
     // Step 2: Format
     format: 'GROUP_STAGE',
@@ -44,7 +44,7 @@ export function TournamentWizard() {
 
     // Step 4: Match Config
     matchCount: 6,
-    maps: ['ERANGEL', 'MIRAMAR', 'SANHOK', 'VIKENDI'],
+    maps: ['ERANGEL', 'MIRAMAR', 'SANHOK', 'VIKENDI', 'RONDO'],
     matchDurationMinutes: 30,
     breakDurationMinutes: 15,
 
@@ -144,13 +144,15 @@ export function TournamentWizard() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-black text-white">Create New BGMI Tournament</h1>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Step {step} of 7: {steps[step - 1].title}
+            <h1 className="text-3xl font-teko uppercase font-bold tracking-wider text-white">
+              CREATE NEW <span className="text-[#ffb60e]">BGMI TOURNAMENT</span>
+            </h1>
+            <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-0.5">
+              STEP {step} OF 7: <span className="text-[#ffb60e] font-bold">{steps[step - 1].title}</span>
             </p>
           </div>
-          <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30">
-            {Math.round((step / 7) * 100)}% Complete
+          <span className="text-xs font-condensed font-bold uppercase tracking-wider text-[#ffb60e] bg-[#ffb60e]/10 px-3 py-1 tactical-cut border border-[#ffb60e]/30">
+            {Math.round((step / 7) * 100)}% COMPLETE
           </span>
         </div>
 
@@ -159,8 +161,8 @@ export function TournamentWizard() {
           {steps.map((s) => (
             <div
               key={s.num}
-              className={`h-1.5 rounded-full transition-colors ${
-                s.num <= step ? 'bg-emerald-500 shadow-sm shadow-emerald-500/40' : 'bg-slate-800'
+              className={`h-2 tactical-cut transition-colors ${
+                s.num <= step ? 'bg-[#ffb60e] shadow-sm shadow-[#ffb60e]/40' : 'bg-[#222222]'
               }`}
             />
           ))}
@@ -168,70 +170,70 @@ export function TournamentWizard() {
       </div>
 
       {error && (
-        <div className="p-3 mb-6 rounded-lg bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-medium">
+        <div className="p-3 mb-6 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-condensed font-bold tracking-wide">
           {error}
         </div>
       )}
 
       {/* Step Content */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
+      <div className="bg-[#171716] border border-[#333333] p-6 shadow-2xl">
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-xl font-heading font-black tracking-wider text-white uppercase flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-[#ffb60e]" />
               Tournament Information
             </h2>
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+              <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                 Tournament Name *
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                placeholder="e.g. BGMI Winter Invitational"
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2.5 text-xs focus:outline-none focus:border-[#ffb60e] font-sans"
+                placeholder="e.g. BGMI Pro Invitational 2026"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+              <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                 Organizer Organization *
               </label>
               <input
                 type="text"
                 value={formData.organizer}
                 onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                placeholder="e.g. Sathyabama Esports Club"
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2.5 text-xs focus:outline-none focus:border-[#ffb60e] font-sans"
+                placeholder="e.g. Krafton Community Esports"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">Description</label>
+              <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">Description</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:outline-none focus:border-[#ffb60e] font-sans"
                 placeholder="Tournament overview, broadcast links, sponsor acknowledgements..."
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Start Date</label>
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">Start Date</label>
                 <input
                   type="datetime-local"
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:outline-none focus:border-[#ffb60e] font-mono"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">End Date</label>
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">End Date</label>
                 <input
                   type="datetime-local"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs focus:outline-none focus:border-[#ffb60e] font-mono"
                 />
               </div>
             </div>
@@ -240,8 +242,8 @@ export function TournamentWizard() {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Settings className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-xl font-heading font-black tracking-wider text-white uppercase flex items-center gap-2">
+              <Settings className="w-5 h-5 text-[#ffb60e]" />
               Tournament Format
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -254,14 +256,14 @@ export function TournamentWizard() {
                 <div
                   key={fmt.id}
                   onClick={() => setFormData({ ...formData, format: fmt.id })}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                  className={`p-4 tactical-cut border cursor-pointer transition-all ${
                     formData.format === fmt.id
-                      ? 'bg-emerald-500/15 border-emerald-500 text-white'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                      ? 'bg-[#ffb60e]/15 border-[#ffb60e] text-white shadow-md shadow-[#ffb60e]/15'
+                      : 'bg-[#0a0a0a] border-white/10 text-slate-400 hover:border-white/20'
                   }`}
                 >
-                  <p className="font-bold text-sm text-slate-200">{fmt.label}</p>
-                  <p className="text-xs text-slate-400 mt-1">{fmt.desc}</p>
+                  <p className="font-heading font-bold text-base text-white uppercase tracking-wide">{fmt.label}</p>
+                  <p className="text-xs text-slate-400 mt-1 font-sans">{fmt.desc}</p>
                 </div>
               ))}
             </div>
@@ -270,53 +272,53 @@ export function TournamentWizard() {
 
         {step === 3 && (
           <div className="space-y-4">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Users className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-xl font-heading font-black tracking-wider text-white uppercase flex items-center gap-2">
+              <Users className="w-5 h-5 text-[#ffb60e]" />
               Squad Limits & Roster Configuration
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Total Participating Teams Cap
                 </label>
                 <input
                   type="number"
                   value={formData.totalTeamsCap}
                   onChange={(e) => setFormData({ ...formData, totalTeamsCap: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs font-mono font-bold focus:outline-none focus:border-[#ffb60e]"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Max Teams Per Lobby / Group
                 </label>
                 <input
                   type="number"
                   value={formData.maxTeamsPerGroup}
                   onChange={(e) => setFormData({ ...formData, maxTeamsPerGroup: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs font-mono font-bold focus:outline-none focus:border-[#ffb60e]"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Squad Size (Starting Lineup)
                 </label>
                 <input
                   type="number"
                   value={formData.squadSize}
                   onChange={(e) => setFormData({ ...formData, squadSize: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs font-mono font-bold focus:outline-none focus:border-[#ffb60e]"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-heading font-bold text-slate-300 block mb-1 uppercase tracking-wider">
                   Substitutes Cap (Bench)
                 </label>
                 <input
                   type="number"
                   value={formData.substitutesCap}
                   onChange={(e) => setFormData({ ...formData, substitutesCap: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#0a0a0a] border border-white/10 text-white tactical-cut px-3 py-2 text-xs font-mono font-bold focus:outline-none focus:border-[#ffb60e]"
                 />
               </div>
             </div>
@@ -324,54 +326,91 @@ export function TournamentWizard() {
         )}
 
         {step === 4 && (
-          <div className="space-y-4">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-emerald-400" />
-              Match Schedule Configuration
+          <div className="space-y-5">
+            <h2 className="text-xl font-teko uppercase tracking-wider text-white flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-[#ffb60e]" />
+              MATCH SCHEDULE CONFIGURATION
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
-                  Number of Matches to Generate
+                <label className="text-xs font-condensed uppercase tracking-wider font-bold text-gray-300 block mb-1">
+                  MATCHES TO GENERATE
                 </label>
                 <input
                   type="number"
                   value={formData.matchCount}
                   onChange={(e) => setFormData({ ...formData, matchCount: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#121212] border border-[#333333] text-white px-3 py-2 text-sm focus:outline-none focus:border-[#ffb60e] font-condensed font-bold"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
-                  Match Duration (Minutes)
+                <label className="text-xs font-condensed uppercase tracking-wider font-bold text-gray-300 block mb-1">
+                  MATCH DURATION (MIN)
                 </label>
                 <input
                   type="number"
                   value={formData.matchDurationMinutes}
                   onChange={(e) => setFormData({ ...formData, matchDurationMinutes: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#121212] border border-[#333333] text-white px-3 py-2 text-sm focus:outline-none focus:border-[#ffb60e] font-condensed font-bold"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
-                  Break Duration (Minutes)
+                <label className="text-xs font-condensed uppercase tracking-wider font-bold text-gray-300 block mb-1">
+                  BREAK DURATION (MIN)
                 </label>
                 <input
                   type="number"
                   value={formData.breakDurationMinutes}
                   onChange={(e) => setFormData({ ...formData, breakDurationMinutes: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#121212] border border-[#333333] text-white px-3 py-2 text-sm focus:outline-none focus:border-[#ffb60e] font-condensed font-bold"
                 />
               </div>
+            </div>
+
+            {/* Map Pool Selector including RONDO */}
+            <div className="pt-2">
+              <label className="text-xs font-condensed uppercase tracking-wider font-bold text-gray-300 block mb-2">
+                MAP ROTATION POOL (CLICK TO TOGGLE MAPS IN SEQUENCE)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                {(['ERANGEL', 'MIRAMAR', 'SANHOK', 'VIKENDI', 'RONDO'] as const).map((mapName) => {
+                  const isSelected = formData.maps.includes(mapName);
+                  return (
+                    <button
+                      key={mapName}
+                      type="button"
+                      onClick={() => {
+                        const newMaps = isSelected
+                          ? formData.maps.filter((m) => m !== mapName)
+                          : [...formData.maps, mapName];
+                        if (newMaps.length > 0) {
+                          setFormData({ ...formData, maps: newMaps });
+                        }
+                      }}
+                      className={`p-3 text-center tactical-cut font-condensed uppercase tracking-wider text-xs font-bold transition-all border ${
+                        isSelected
+                          ? 'bg-[#ffb60e] text-black border-[#ffb60e] shadow-md shadow-[#ffb60e]/20'
+                          : 'bg-[#121212] text-gray-400 border-[#333333] hover:border-gray-500'
+                      }`}
+                    >
+                      <div className="text-base font-teko tracking-wider">{mapName}</div>
+                      <div className="text-[10px] font-extrabold">{isSelected ? '✓ ACTIVE' : 'DISABLED'}</div>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[11px] text-gray-400 mt-2 font-condensed">
+                Active rotation: <span className="text-[#ffb60e] font-bold">{formData.maps.join(' → ')}</span>
+              </p>
             </div>
           </div>
         )}
 
         {step === 5 && (
           <div className="space-y-4">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Calculator className="w-4 h-4 text-emerald-400" />
-              Scoring Engine System
+            <h2 className="text-xl font-teko uppercase tracking-wider text-white flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-[#ffb60e]" />
+              SCORING ENGINE SYSTEM
             </h2>
             <div className="space-y-3">
               {[
@@ -394,14 +433,14 @@ export function TournamentWizard() {
                 <div
                   key={p.id}
                   onClick={() => setFormData({ ...formData, scoringPreset: p.id })}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                  className={`p-4 tactical-cut border cursor-pointer transition-all ${
                     formData.scoringPreset === p.id
-                      ? 'bg-emerald-500/15 border-emerald-500 text-white'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                      ? 'bg-[#ffb60e]/15 border-[#ffb60e] text-white shadow-md shadow-[#ffb60e]/10'
+                      : 'bg-[#121212] border-[#333333] text-gray-400 hover:border-gray-600'
                   }`}
                 >
-                  <p className="font-bold text-sm text-slate-200">{p.name}</p>
-                  <p className="text-xs text-slate-400 mt-1 font-mono">{p.desc}</p>
+                  <p className="font-teko uppercase tracking-wider text-lg text-[#ffb60e] leading-tight">{p.name}</p>
+                  <p className="text-xs text-gray-300 mt-1 font-condensed font-medium">{p.desc}</p>
                 </div>
               ))}
             </div>
@@ -486,37 +525,37 @@ export function TournamentWizard() {
         )}
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-between mt-8 pt-4 border-t border-slate-800">
+        <div className="flex items-center justify-between mt-8 pt-4 border-t border-[#333333]">
           <button
             type="button"
             onClick={handleBack}
             disabled={step === 1 || isSubmitting}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold ${
-              step === 1 ? 'opacity-40 cursor-not-allowed text-slate-600' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+            className={`flex items-center gap-1.5 px-4 py-2 tactical-cut text-xs font-condensed uppercase tracking-wider font-bold ${
+              step === 1 ? 'opacity-40 cursor-not-allowed text-gray-600 bg-transparent' : 'bg-[#222222] hover:bg-[#2a2a2a] text-gray-300 border border-[#444444]'
             }`}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Back
+            BACK
           </button>
 
           {step < 7 ? (
             <button
               type="button"
               onClick={handleNext}
-              className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20"
+              className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-6 py-2 flex items-center gap-1.5 text-base"
             >
-              Continue
-              <ArrowRight className="w-3.5 h-3.5" />
+              CONTINUE
+              <ArrowRight className="w-4 h-4 text-black" />
             </button>
           ) : (
             <button
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 transition-all"
+              className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-7 py-2.5 flex items-center gap-2 text-lg shadow-xl shadow-[#ffb60e]/30"
             >
-              <CheckCircle className="w-4 h-4" />
-              {isSubmitting ? 'Creating Tournament...' : 'Launch Tournament'}
+              <CheckCircle className="w-5 h-5 text-black" />
+              {isSubmitting ? 'INITIALIZING TOURNAMENT...' : 'LAUNCH TOURNAMENT'}
             </button>
           )}
         </div>

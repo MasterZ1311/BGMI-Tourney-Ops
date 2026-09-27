@@ -1,12 +1,16 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { auditTournamentFinalization } from '@/lib/tournament/engine';
+import { TournamentFinalizeSchema } from '@/lib/validation/schemas';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
 
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    const body = await req.json().catch(() => ({}));
+    const validated = TournamentFinalizeSchema.parse(body);
+
     const tournament = await db.tournament.findUnique({
       where: { id: params.id },
       include: {
@@ -17,17 +21,19 @@ export async function POST(
     });
 
     if (!tournament) {
-      return NextResponse.json(
-        { success: false, error: { message: 'Tournament not found' } },
-        { status: 404 }
-      );
+      return apiError('Tournament not found', {
+        status: 404,
+        code: 'NOT_FOUND',
+        path: `/api/tournaments/${params.id}/finalize`,
+      });
     }
 
     if (tournament.isFinalized) {
-      return NextResponse.json(
-        { success: false, error: { message: 'Tournament is already finalized' } },
-        { status: 400 }
-      );
+      return apiError('Tournament is already finalized', {
+        status: 409,
+        code: 'ALREADY_FINALIZED',
+        path: `/api/tournaments/${params.id}/finalize`,
+      });
     }
 
     const totalMatches = tournament.matches.length;
@@ -51,17 +57,12 @@ export async function POST(
     });
 
     if (!audit.canFinalize) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'PREFLIGHT_FAILED',
-            message: 'Cannot finalize tournament. Pre-flight checks failed.',
-            details: audit.checklist,
-          },
-        },
-        { status: 400 }
-      );
+      return apiError('Cannot finalize tournament. Pre-flight checks failed.', {
+        status: 400,
+        code: 'PREFLIGHT_FAILED',
+        details: audit.checklist,
+        path: `/api/tournaments/${params.id}/finalize`,
+      });
     }
 
     const finalized = await db.tournament.update({
@@ -79,21 +80,15 @@ export async function POST(
         action: 'TOURNAMENT_FINALIZED',
         entityType: 'Tournament',
         entityId: params.id,
-        reason: 'Passed pre-flight audit checklist and officially finalized by Admin.',
+        reason: `Passed pre-flight audit checklist and officially finalized by ${validated.confirmedBy || 'Tournament Admin'}.`,
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        tournament: finalized,
-        checklist: audit.checklist,
-      },
+    return apiSuccess({
+      tournament: finalized,
+      checklist: audit.checklist,
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to finalize tournament' } },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to finalize tournament', `/api/tournaments/${params.id}/finalize`);
   }
 }

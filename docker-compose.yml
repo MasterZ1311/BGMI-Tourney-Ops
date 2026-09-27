@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # BGMI Tournament Control Center Application
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bgmi-tcc-app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-bgmi-tcc-super-secret-key-replace-in-production-32-chars}
+      - ENABLE_DEMO_AUTH=${ENABLE_DEMO_AUTH:-true}
+      # Default: Persistent SQLite database in mounted volume
+      - DATABASE_URL=${DATABASE_URL:-file:/app/prisma/dev.db}
+    volumes:
+      # Persistent storage for SQLite database and WAL files
+      - sqlite_data:/app/prisma
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------------------------
+  # Optional: PostgreSQL Database (Activate with: docker compose --profile postgres up)
+  # When using PostgreSQL:
+  #   1. Set provider = "postgresql" in prisma/schema.prisma
+  #   2. Set DATABASE_URL="postgresql://bgmi:bgmipassword@postgres:5432/bgmi_tcc?schema=public"
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: bgmi-tcc-postgres
+    restart: unless-stopped
+    profiles:
+      - postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bgmi_tcc}
+      POSTGRES_USER: ${POSTGRES_USER:-bgmi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bgmipassword}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bgmi} -d ${POSTGRES_DB:-bgmi_tcc}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  sqlite_data:
+    name: bgmi_tcc_sqlite_data
+  postgres_data:
+    name: bgmi_tcc_postgres_data

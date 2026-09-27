@@ -102,42 +102,42 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <DoorOpen className="w-5 h-5 text-emerald-400" />
-            BGMI Custom Room Operations Hub
+          <h2 className="text-3xl font-teko uppercase font-bold tracking-wider text-white flex items-center gap-2 leading-none">
+            <DoorOpen className="w-6 h-6 text-[#ffb60e]" />
+            BGMI CUSTOM ROOM OPERATIONS HUB
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Manage lobby IDs, encrypted passwords, and custom room lifecycle states
+          <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-1">
+            MANAGE LOBBY IDS, ENCRYPTED PASSWORDS, AND CUSTOM ROOM LIFECYCLE STATES
           </p>
         </div>
       </div>
 
       {/* Room Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+      <div className="bg-[#171716] border border-[#333333] tactical-cut overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px] bg-slate-950/60">
-                <th className="py-3 px-4">Match / Map</th>
-                <th className="py-3 px-4">Room Name</th>
-                <th className="py-3 px-4">Room ID</th>
-                <th className="py-3 px-4">Password</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Operations</th>
+              <tr className="border-b border-[#333333] text-gray-400 font-condensed uppercase font-bold text-xs bg-[#101010]">
+                <th className="py-3 px-4">MATCH / MAP</th>
+                <th className="py-3 px-4">ROOM NAME</th>
+                <th className="py-3 px-4">ROOM ID</th>
+                <th className="py-3 px-4">PASSWORD</th>
+                <th className="py-3 px-4">STATUS</th>
+                <th className="py-3 px-4 text-right">OPERATIONS</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-medium">
+            <tbody className="divide-y divide-[#262626] font-medium font-condensed">
               {matches.map((match) => {
                 const room = match.room;
                 const isEditing = editingRoomId === match.id;
                 const isPasswordVisible = visiblePasswords[match.id] || false;
 
                 return (
-                  <tr key={match.id} className="hover:bg-slate-800/40 transition-colors">
+                  <tr key={match.id} className="hover:bg-[#202020] transition-colors">
                     <td className="py-3 px-4">
                       <div>
-                        <span className="font-bold text-white">{match.title}</span>
-                        <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        <span className="font-bold text-white text-sm">{match.title}</span>
+                        <p className="text-[11px] text-[#ffb60e] font-condensed font-bold mt-0.5 uppercase">
                           {match.map} • {match.perspective} •{' '}
                           {new Date(match.scheduledStartTime).toLocaleTimeString([], {
                             hour: '2-digit',
@@ -147,8 +147,8 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                       </div>
                     </td>
 
-                    <td className="py-3 px-4 font-mono font-bold text-slate-300">
-                      {room?.roomName || 'Pending'}
+                    <td className="py-3 px-4 font-bold text-gray-200">
+                      {room?.roomName || 'PENDING'}
                     </td>
 
                     <td className="py-3 px-4">

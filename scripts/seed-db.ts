@@ -1,4 +1,4 @@
-import { seedDemoTournament } from '../lib/seed-service.ts';
+import { seedDemoTournament } from '../lib/seed-service';
 
 async function main() {
   console.log('Seeding BGMI Pro Invitational 2026 demo tournament...');

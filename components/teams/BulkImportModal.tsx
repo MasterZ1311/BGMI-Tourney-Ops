@@ -101,24 +101,24 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-2xl w-full p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="tactical-cut bg-[#121212] border border-white/10 max-w-2xl w-full p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
-            <h3 className="text-base font-bold text-white">Bulk Import BGMI Squads</h3>
+            <FileSpreadsheet className="w-5 h-5 text-[#ffb60e]" />
+            <h3 className="text-xl font-heading font-black tracking-wider text-white uppercase">Bulk Import BGMI Squads</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+            className="text-slate-400 hover:text-white p-1 tactical-cut hover:bg-white/10"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {error && (
-          <div className="mt-4 p-3 rounded-lg bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300">
+          <div className="mt-4 p-3 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-mono">
             {error}
           </div>
         )}
@@ -126,8 +126,8 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
         {/* Body */}
         <div className="flex-1 overflow-y-auto py-4 space-y-4">
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-slate-300">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
                 Paste CSV Data or Sample Roster
               </label>
               <button
@@ -136,7 +136,7 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
                   setCsvText(sampleCsv);
                   parseAndPreview(sampleCsv);
                 }}
-                className="text-[11px] text-emerald-400 hover:underline flex items-center gap-1"
+                className="text-[11px] text-[#ffb60e] hover:underline flex items-center gap-1 font-bold font-mono uppercase"
               >
                 <Download className="w-3 h-3" /> Load Sample BGMI CSV
               </button>
@@ -146,7 +146,7 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
               value={csvText}
               onChange={(e) => setCsvText(e.target.value)}
               placeholder="Team Name,Tag,Captain,Player 1,P1 UID,Player 2,P2 UID,Player 3,P3 UID,Player 4,P4 UID,Substitute,Sub UID..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full bg-[#0a0a0a] border border-white/10 tactical-cut p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-[#ffb60e]"
             />
           </div>
 
@@ -155,7 +155,7 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
               type="button"
               onClick={() => parseAndPreview(csvText)}
               disabled={isPreviewing || !csvText.trim()}
-              className="px-4 py-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700"
+              className="px-4 py-2 text-xs font-heading font-black uppercase tracking-wider bg-[#1c1c1c] hover:bg-[#282828] text-slate-200 tactical-cut border border-white/10 transition-all"
             >
               {isPreviewing ? 'Validating...' : 'Validate CSV Rows'}
             </button>
@@ -163,17 +163,17 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
 
           {/* Validation Preview Results */}
           {previewResult && (
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+            <div className="p-4 tactical-cut bg-[#0a0a0a] border border-white/10 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                   Validation Summary
                 </span>
                 <div className="flex items-center gap-3 text-xs font-semibold">
-                  <span className="text-emerald-400 flex items-center gap-1">
+                  <span className="text-[#ffb60e] flex items-center gap-1 font-bold font-mono">
                     <CheckCircle className="w-3.5 h-3.5" /> {previewResult.validCount} Valid Squads
                   </span>
                   {previewResult.invalidCount > 0 && (
-                    <span className="text-rose-400 flex items-center gap-1">
+                    <span className="text-rose-400 flex items-center gap-1 font-bold font-mono">
                       <AlertTriangle className="w-3.5 h-3.5" /> {previewResult.invalidCount} Errors
                     </span>
                   )}
@@ -183,7 +183,7 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
               {previewResult.errors && previewResult.errors.length > 0 && (
                 <div className="space-y-1 max-h-32 overflow-y-auto text-[11px] text-rose-300 font-mono">
                   {previewResult.errors.map((err: any, i: number) => (
-                    <div key={i} className="p-1.5 rounded bg-rose-950/40 border border-rose-900/50">
+                    <div key={i} className="p-1.5 tactical-cut bg-rose-950/40 border border-rose-900/50">
                       Row #{err.rowNumber} ({err.team}): {err.error}
                     </div>
                   ))}
@@ -194,10 +194,10 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
         </div>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+        <div className="pt-4 border-t border-white/10 flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
+            className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white uppercase font-mono"
           >
             Cancel
           </button>
@@ -205,7 +205,7 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
           <button
             onClick={handleCommit}
             disabled={isCommitting || !previewResult || previewResult.validCount === 0}
-            className="px-5 py-2 text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-md shadow-emerald-500/20 disabled:opacity-50"
+            className="tactical-btn-gold px-6 py-2.5 text-xs uppercase tracking-wider font-heading font-black shadow-lg shadow-[#ffb60e]/20 disabled:opacity-50"
           >
             {isCommitting
               ? 'Importing...'

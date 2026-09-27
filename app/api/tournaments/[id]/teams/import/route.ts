@@ -1,25 +1,6 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-
-interface ParsedRow {
-  teamName: string;
-  tag: string;
-  captainName?: string;
-  p1Name?: string;
-  p1Ign: string;
-  p1Id: string;
-  p2Name?: string;
-  p2Ign: string;
-  p2Id: string;
-  p3Name?: string;
-  p3Ign: string;
-  p3Id: string;
-  p4Name?: string;
-  p4Ign: string;
-  p4Id: string;
-  subIgn?: string;
-  subId?: string;
-}
+import { TeamBulkImportSchema } from '@/lib/validation/schemas';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
 
 export async function POST(
   req: Request,
@@ -27,14 +8,8 @@ export async function POST(
 ) {
   try {
     const body = await req.json();
-    const { rows, dryRun = false } = body as { rows: ParsedRow[]; dryRun?: boolean };
-
-    if (!rows || !Array.isArray(rows) || rows.length === 0) {
-      return NextResponse.json(
-        { success: false, error: { message: 'No rows provided for import' } },
-        { status: 400 }
-      );
-    }
+    const validated = TeamBulkImportSchema.parse(body);
+    const { rows, dryRun = false } = validated;
 
     const validationErrors: Array<{ rowNumber: number; team: string; error: string }> = [];
     const validTeams: any[] = [];
@@ -81,10 +56,10 @@ export async function POST(
 
       // Validate players (at least 4 players required)
       const players = [
-        { name: row.p1Name || row.p1Ign, ign: row.p1Ign, characterId: row.p1Id, role: 'CAPTAIN' },
-        { name: row.p2Name || row.p2Ign, ign: row.p2Ign, characterId: row.p2Id, role: 'ASSAULTER' },
-        { name: row.p3Name || row.p3Ign, ign: row.p3Ign, characterId: row.p3Id, role: 'SUPPORT' },
-        { name: row.p4Name || row.p4Ign, ign: row.p4Ign, characterId: row.p4Id, role: 'ASSAULTER' },
+        { name: row.p1Name || row.p1Ign, ign: row.p1Ign, characterId: row.p1Id, role: 'CAPTAIN' as const },
+        { name: row.p2Name || row.p2Ign, ign: row.p2Ign, characterId: row.p2Id, role: 'ASSAULTER' as const },
+        { name: row.p3Name || row.p3Ign, ign: row.p3Ign, characterId: row.p3Id, role: 'SUPPORT' as const },
+        { name: row.p4Name || row.p4Ign, ign: row.p4Ign, characterId: row.p4Id, role: 'ASSAULTER' as const },
       ];
 
       for (let pIdx = 0; pIdx < players.length; pIdx++) {
@@ -117,6 +92,16 @@ export async function POST(
 
       // Substitute if provided
       if (row.subIgn && row.subId) {
+        if (seenPlayerUids.has(row.subId)) {
+          validationErrors.push({
+            rowNumber: rowNum,
+            team: teamName,
+            error: `Substitute UID ${row.subId} (${row.subIgn}) is already registered.`,
+          });
+          return;
+        }
+        seenPlayerUids.add(row.subId);
+
         teamRoster.push({
           name: row.subIgn,
           ign: row.subIgn,
@@ -136,32 +121,25 @@ export async function POST(
     });
 
     if (dryRun) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          totalRows: rows.length,
-          validCount: validTeams.length,
-          invalidCount: validationErrors.length,
-          errors: validationErrors,
-          preview: validTeams.slice(0, 5),
-        },
+      return apiSuccess({
+        totalRows: rows.length,
+        validCount: validTeams.length,
+        invalidCount: validationErrors.length,
+        errors: validationErrors,
+        preview: validTeams.slice(0, 5),
       });
     }
 
     if (validationErrors.length > 0 && validTeams.length === 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            message: 'All rows had validation errors. Import aborted.',
-            details: validationErrors,
-          },
-        },
-        { status: 400 }
-      );
+      return apiError('All rows had validation errors. Import aborted.', {
+        status: 400,
+        code: 'BULK_IMPORT_VALIDATION_FAILED',
+        details: validationErrors,
+        path: `/api/tournaments/${params.id}/teams/import`,
+      });
     }
 
-    // Persist valid teams
+    // Persist valid teams in database
     const created = [];
     for (const item of validTeams) {
       const team = await db.team.create({
@@ -196,18 +174,12 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        importedCount: created.length,
-        skippedCount: validationErrors.length,
-        errors: validationErrors,
-      },
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Bulk import failed' } },
-      { status: 500 }
-    );
+    return apiSuccess({
+      importedCount: created.length,
+      skippedCount: validationErrors.length,
+      errors: validationErrors,
+    }, { status: 200 });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Bulk import failed', `/api/tournaments/${params.id}/teams/import`);
   }
 }

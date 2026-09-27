@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { distributeTeamsToGroups } from '@/lib/tournament/engine';
+import { GroupRandomizeSchema } from '@/lib/validation/schemas';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
 
 export async function POST(
   req: Request,
@@ -8,7 +9,8 @@ export async function POST(
 ) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { seed = Math.floor(Math.random() * 100000) } = body;
+    const validated = GroupRandomizeSchema.parse(body);
+    const seed = validated.seed ?? Math.floor(Math.random() * 100000);
 
     const groups = await db.group.findMany({
       where: { tournamentId: params.id },
@@ -16,24 +18,21 @@ export async function POST(
     });
 
     if (groups.length === 0) {
-      return NextResponse.json(
-        { success: false, error: { message: 'No groups exist. Create groups before randomizing.' } },
-        { status: 400 }
-      );
+      return apiError('No groups exist. Create groups before randomizing.', {
+        status: 400,
+        code: 'NO_GROUPS_EXIST',
+        path: `/api/tournaments/${params.id}/groups/randomize`,
+      });
     }
 
     // Check if any group is locked
     const lockedGroups = groups.filter((g) => g.isLocked);
     if (lockedGroups.length > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            message: 'Cannot randomize teams while groups are locked. Unlock them first.',
-          },
-        },
-        { status: 400 }
-      );
+      return apiError('Cannot randomize teams while groups are locked. Unlock them first.', {
+        status: 409,
+        code: 'GROUPS_LOCKED',
+        path: `/api/tournaments/${params.id}/groups/randomize`,
+      });
     }
 
     const activeTeams = await db.team.findMany({
@@ -45,10 +44,11 @@ export async function POST(
     });
 
     if (activeTeams.length === 0) {
-      return NextResponse.json(
-        { success: false, error: { message: 'No active teams found to distribute.' } },
-        { status: 400 }
-      );
+      return apiError('No active teams found to distribute.', {
+        status: 400,
+        code: 'NO_ACTIVE_TEAMS',
+        path: `/api/tournaments/${params.id}/groups/randomize`,
+      });
     }
 
     const distribution = distributeTeamsToGroups({
@@ -83,18 +83,12 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        seed,
-        groupCount: groups.length,
-        distributedTeams: activeTeams.length,
-      },
+    return apiSuccess({
+      seed,
+      groupCount: groups.length,
+      distributedTeams: activeTeams.length,
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to randomize groups' } },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to randomize groups', `/api/tournaments/${params.id}/groups/randomize`);
   }
 }

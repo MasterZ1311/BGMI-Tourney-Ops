@@ -82,8 +82,8 @@ export default function RootHomePage() {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
         <div className="text-center space-y-3">
-          <div className="w-9 h-9 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-slate-400 font-mono tracking-wider">
+          <div className="w-10 h-10 border-2 border-[#ffb60e] border-t-transparent rounded-full animate-spin mx-auto shadow-lg shadow-[#ffb60e]/20" />
+          <p className="text-xs text-[#ffb60e] font-mono tracking-widest uppercase">
             INITIALIZING BGMI TOURNAMENT CONTROL CENTER...
           </p>
         </div>
@@ -96,65 +96,65 @@ export default function RootHomePage() {
     return (
       <div className="max-w-4xl mx-auto py-16 px-4 space-y-12">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white mx-auto shadow-2xl shadow-emerald-500/30">
+          <div className="w-16 h-16 tactical-cut bg-[#ffb60e] flex items-center justify-center text-black mx-auto shadow-2xl shadow-[#ffb60e]/20">
             <Trophy className="w-9 h-9" />
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tight">
+          <h1 className="text-5xl font-heading font-black text-white tracking-wider uppercase">
             BGMI Tournament Control Center
           </h1>
-          <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
-            The all-in-one operations hub for Battlegrounds Mobile India esports organizers.
-            Plan schedules, manage squad check-in, dispatch room credentials, enter scores, and finalize leaderboards without spreadsheets.
+          <p className="text-slate-300 max-w-xl mx-auto text-sm leading-relaxed font-sans">
+            The authoritative esports operations hub for Battlegrounds Mobile India organizers.
+            Plan map rotations, manage squad check-in, dispatch room credentials, execute rapid score entry, and finalize leaderboards without spreadsheets.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <button
               onClick={handleSeedDemo}
               disabled={isSeeding}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 transition-all"
+              className="tactical-btn-gold px-8 py-3.5 text-sm uppercase tracking-wider font-heading font-black shadow-xl shadow-[#ffb60e]/20 transition-all flex items-center gap-2"
             >
               <Radio className={`w-4 h-4 ${isSeeding ? 'animate-pulse' : ''}`} />
-              <span>{isSeeding ? 'Seeding Tournament...' : 'Load Demo Tournament'}</span>
+              <span>{isSeeding ? 'SEEDING TOURNAMENT...' : 'LOAD OFFICIAL DEMO TOURNAMENT'}</span>
             </button>
 
             <Link
               href="/tournaments/new"
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-sm font-bold transition-all"
+              className="tactical-cut bg-[#151515] hover:bg-[#202020] text-slate-200 border border-white/10 hover:border-[#ffb60e]/50 px-8 py-3.5 text-sm uppercase tracking-wider font-heading font-black transition-all flex items-center gap-2"
             >
-              <PlusCircle className="w-4 h-4 text-emerald-400" />
-              <span>Create Tournament Wizard</span>
+              <PlusCircle className="w-4 h-4 text-[#ffb60e]" />
+              <span>CREATE TOURNAMENT WIZARD</span>
             </Link>
           </div>
         </div>
 
         {/* Features Matrix */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div className="tactical-cut bg-[#121212] border border-white/10 p-6 space-y-3 hover:border-[#ffb60e]/40 transition-all">
+            <div className="w-10 h-10 tactical-cut bg-[#ffb60e]/10 border border-[#ffb60e]/30 flex items-center justify-center text-[#ffb60e]">
               <Calculator className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Configurable Scoring Engine</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-heading font-bold text-white tracking-wide uppercase">Configurable Scoring Engine</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-sans">
               Official BGIS 10-Point, BMPS 15-Point, or custom rules. Automatic tie-breaker trees (WWCD, Placement, Kills, Best Match).
             </p>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+          <div className="tactical-cut bg-[#121212] border border-white/10 p-6 space-y-3 hover:border-[#ffb60e]/40 transition-all">
+            <div className="w-10 h-10 tactical-cut bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
               <Play className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Rapid Match Day Ops</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-heading font-bold text-white tracking-wide uppercase">Rapid Match Day Ops</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-sans">
               1-click attendance check-in, instant Room ID/Password copy, lobby conflict detection, and 60-second score entry.
             </p>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+          <div className="tactical-cut bg-[#121212] border border-white/10 p-6 space-y-3 hover:border-[#ffb60e]/40 transition-all">
+            <div className="w-10 h-10 tactical-cut bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
               <Shield className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">Integrity & Audit</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-heading font-bold text-white tracking-wide uppercase">Integrity & Audit</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-sans">
               Immutable audit logs, point penalties, dispute adjudication desk, and pre-flight finalization checklist guards.
             </p>
           </div>

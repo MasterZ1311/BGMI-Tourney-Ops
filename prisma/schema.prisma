@@ -84,6 +84,8 @@ model Group {
 
   teams   Team[]
   matches Match[]
+
+  @@index([tournamentId])
 }
 
 model Team {
@@ -128,6 +130,7 @@ model Player {
   updatedAt    DateTime @updatedAt
 
   @@index([teamId])
+  @@index([characterId])
 }
 
 model Match {
@@ -138,7 +141,7 @@ model Match {
   group              Group?     @relation(fields: [groupId], references: [id], onDelete: SetNull)
   matchNumber        Int
   title              String // e.g. "Match 1 - Group A"
-  map                String     @default("ERANGEL") // ERANGEL, MIRAMAR, SANHOK, VIKENDI
+  map                String     @default("ERANGEL") // ERANGEL, MIRAMAR, SANHOK, VIKENDI, RONDO
   perspective        String     @default("TPP") // TPP, FPP
   scheduledStartTime DateTime
   actualStartTime    DateTime?
@@ -220,6 +223,7 @@ model Attendance {
 
   @@index([tournamentId])
   @@index([teamId])
+  @@index([matchId])
 }
 
 model Penalty {
@@ -240,6 +244,7 @@ model Penalty {
 
   @@index([tournamentId])
   @@index([teamId])
+  @@index([matchId])
 }
 
 model Dispute {
@@ -261,6 +266,7 @@ model Dispute {
 
   @@index([tournamentId])
   @@index([teamId])
+  @@index([matchId])
 }
 
 model AuditLog {
@@ -277,6 +283,7 @@ model AuditLog {
   createdAt    DateTime    @default(now())
 
   @@index([tournamentId])
+  @@index([userId])
   @@index([entityType, entityId])
 }
 

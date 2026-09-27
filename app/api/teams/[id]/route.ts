@@ -1,5 +1,39 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { TeamUpdateSchema } from '@/lib/validation/schemas';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
+
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const team = await db.team.findUnique({
+      where: { id: params.id },
+      include: {
+        players: true,
+        group: true,
+        attendances: {
+          orderBy: { timestamp: 'desc' },
+          take: 5,
+        },
+        penalties: true,
+        disputes: true,
+      },
+    });
+
+    if (!team) {
+      return apiError('Team not found', {
+        status: 404,
+        code: 'NOT_FOUND',
+        path: `/api/teams/${params.id}`,
+      });
+    }
+
+    return apiSuccess(team);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch team', `/api/teams/${params.id}`);
+  }
+}
 
 export async function PATCH(
   req: Request,
@@ -7,18 +41,31 @@ export async function PATCH(
 ) {
   try {
     const body = await req.json();
+    const validated = TeamUpdateSchema.parse(body);
+
+    const existing = await db.team.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!existing) {
+      return apiError('Team not found', {
+        status: 404,
+        code: 'NOT_FOUND',
+        path: `/api/teams/${params.id}`,
+      });
+    }
 
     const team = await db.team.update({
       where: { id: params.id },
       data: {
-        ...(body.name && { name: body.name }),
-        ...(body.tag && { tag: body.tag.toUpperCase() }),
-        ...(body.groupId !== undefined && { groupId: body.groupId }),
-        ...(body.verificationStatus && { verificationStatus: body.verificationStatus }),
-        ...(body.status && { status: body.status }),
-        ...(body.captainName && { captainName: body.captainName }),
-        ...(body.captainPhone && { captainPhone: body.captainPhone }),
-        ...(body.captainEmail && { captainEmail: body.captainEmail }),
+        ...(validated.name !== undefined && { name: validated.name }),
+        ...(validated.tag !== undefined && { tag: validated.tag.toUpperCase() }),
+        ...(validated.groupId !== undefined && { groupId: validated.groupId }),
+        ...(validated.verificationStatus !== undefined && { verificationStatus: validated.verificationStatus }),
+        ...(validated.status !== undefined && { status: validated.status }),
+        ...(validated.captainName !== undefined && { captainName: validated.captainName }),
+        ...(validated.captainPhone !== undefined && { captainPhone: validated.captainPhone }),
+        ...(validated.captainEmail !== undefined && { captainEmail: validated.captainEmail }),
       },
       include: {
         players: true,
@@ -31,17 +78,14 @@ export async function PATCH(
         action: 'TEAM_UPDATED',
         entityType: 'Team',
         entityId: team.id,
-        afterState: JSON.stringify(body),
-        reason: body.reason || 'Admin team modification',
+        afterState: JSON.stringify(validated),
+        reason: validated.reason || 'Admin team modification',
       },
     });
 
-    return NextResponse.json({ success: true, data: team });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to update team' } },
-      { status: 400 }
-    );
+    return apiSuccess(team);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to update team', `/api/teams/${params.id}`);
   }
 }
 
@@ -50,15 +94,24 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const team = await db.team.delete({
+    const existing = await db.team.findUnique({
       where: { id: params.id },
     });
 
-    return NextResponse.json({ success: true, data: { deleted: true } });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to delete team' } },
-      { status: 500 }
-    );
+    if (!existing) {
+      return apiError('Team not found', {
+        status: 404,
+        code: 'NOT_FOUND',
+        path: `/api/teams/${params.id}`,
+      });
+    }
+
+    await db.team.delete({
+      where: { id: params.id },
+    });
+
+    return apiSuccess({ deleted: true, id: params.id });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to delete team', `/api/teams/${params.id}`);
   }
 }

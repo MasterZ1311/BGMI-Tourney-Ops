@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { TournamentUpdateSchema } from '@/lib/validation/schemas';
+import { apiSuccess, apiError, handleRouteError } from '@/lib/services/api-response';
 
 export async function GET(
   req: Request,
@@ -28,18 +29,12 @@ export async function GET(
     });
 
     if (!tournament) {
-      return NextResponse.json(
-        { success: false, error: { message: 'Tournament not found' } },
-        { status: 404 }
-      );
+      return apiError('Tournament not found', { status: 404, code: 'NOT_FOUND', path: `/api/tournaments/${params.id}` });
     }
 
-    return NextResponse.json({ success: true, data: tournament });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to fetch tournament' } },
-      { status: 500 }
-    );
+    return apiSuccess(tournament);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to fetch tournament', `/api/tournaments/${params.id}`);
   }
 }
 
@@ -49,35 +44,36 @@ export async function PATCH(
 ) {
   try {
     const body = await req.json();
+    const validated = TournamentUpdateSchema.parse(body);
 
     const existing = await db.tournament.findUnique({
       where: { id: params.id },
     });
 
     if (!existing) {
-      return NextResponse.json(
-        { success: false, error: { message: 'Tournament not found' } },
-        { status: 404 }
-      );
+      return apiError('Tournament not found', { status: 404, code: 'NOT_FOUND', path: `/api/tournaments/${params.id}` });
     }
 
-    if (existing.isFinalized && body.status && body.status !== existing.status) {
-      return NextResponse.json(
-        { success: false, error: { message: 'Cannot modify status of a finalized tournament' } },
-        { status: 400 }
-      );
+    if (existing.isFinalized && validated.status && validated.status !== existing.status) {
+      return apiError('Cannot modify status of an officially finalized tournament', {
+        status: 409,
+        code: 'FINALIZED_LOCKED',
+        path: `/api/tournaments/${params.id}`,
+      });
     }
 
     const updated = await db.tournament.update({
       where: { id: params.id },
       data: {
-        ...(body.name && { name: body.name }),
-        ...(body.organizer && { organizer: body.organizer }),
-        ...(body.description !== undefined && { description: body.description }),
-        ...(body.format && { format: body.format }),
-        ...(body.status && { status: body.status }),
-        ...(body.venue !== undefined && { venue: body.venue }),
-        ...(body.contactEmail !== undefined && { contactEmail: body.contactEmail }),
+        ...(validated.name !== undefined && { name: validated.name }),
+        ...(validated.organizer !== undefined && { organizer: validated.organizer }),
+        ...(validated.description !== undefined && { description: validated.description }),
+        ...(validated.format !== undefined && { format: validated.format }),
+        ...(validated.status !== undefined && { status: validated.status }),
+        ...(validated.startDate !== undefined && { startDate: new Date(validated.startDate) }),
+        ...(validated.endDate !== undefined && { endDate: new Date(validated.endDate) }),
+        ...(validated.venue !== undefined && { venue: validated.venue }),
+        ...(validated.contactEmail !== undefined && { contactEmail: validated.contactEmail }),
       },
     });
 
@@ -89,16 +85,13 @@ export async function PATCH(
         entityId: params.id,
         beforeState: JSON.stringify({ status: existing.status }),
         afterState: JSON.stringify({ status: updated.status }),
-        reason: body.reason || 'Admin status transition or edit',
+        reason: validated.reason || 'Admin status transition or metadata edit',
       },
     });
 
-    return NextResponse.json({ success: true, data: updated });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to update tournament' } },
-      { status: 400 }
-    );
+    return apiSuccess(updated);
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to update tournament', `/api/tournaments/${params.id}`);
   }
 }
 
@@ -107,15 +100,20 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const existing = await db.tournament.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!existing) {
+      return apiError('Tournament not found', { status: 404, code: 'NOT_FOUND', path: `/api/tournaments/${params.id}` });
+    }
+
     await db.tournament.delete({
       where: { id: params.id },
     });
 
-    return NextResponse.json({ success: true, data: { deleted: true } });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to delete tournament' } },
-      { status: 500 }
-    );
+    return apiSuccess({ deleted: true, id: params.id });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to delete tournament', `/api/tournaments/${params.id}`);
   }
 }

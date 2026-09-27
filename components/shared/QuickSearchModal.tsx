@@ -111,21 +111,21 @@ export function QuickSearchModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-xl max-w-xl w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-        <div className="flex items-center px-4 py-3 border-b border-slate-800 bg-slate-950/60">
-          <Search className="w-4 h-4 text-slate-400 mr-2.5" />
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
+      <div className="tactical-cut bg-[#121212] border border-white/10 max-w-xl w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="flex items-center px-4 py-3.5 border-b border-white/10 bg-[#0a0a0a]">
+          <Search className="w-4 h-4 text-[#ffb60e] mr-2.5 shrink-0" />
           <input
             type="text"
-            placeholder="Search teams, players, matches, rooms..."
+            placeholder="Search teams, players, matches, rooms, maps..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
-            className="w-full bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none"
+            className="w-full bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none font-sans"
           />
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+            className="text-slate-400 hover:text-white p-1 tactical-cut hover:bg-white/10"
           >
             <X className="w-4 h-4" />
           </button>
@@ -133,7 +133,7 @@ export function QuickSearchModal({
 
         <div className="max-h-80 overflow-y-auto p-2">
           {filtered.length === 0 ? (
-            <div className="text-center py-8 text-xs text-slate-500">
+            <div className="text-center py-8 text-xs text-slate-500 font-mono">
               No matching tournaments, squads, or matches found for &quot;{query}&quot;.
             </div>
           ) : (
@@ -145,34 +145,34 @@ export function QuickSearchModal({
                     onClose();
                     router.push(item.href);
                   }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-800/80 transition-colors text-left group"
+                  className="w-full flex items-center justify-between p-2.5 tactical-cut hover:bg-white/[0.04] transition-colors text-left group border border-transparent hover:border-white/10"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-colors">
-                      {item.type === 'tournament' && <Trophy className="w-3.5 h-3.5" />}
-                      {item.type === 'team' && <Users className="w-3.5 h-3.5" />}
-                      {item.type === 'match' && <Crosshair className="w-3.5 h-3.5" />}
-                      {item.type === 'room' && <DoorOpen className="w-3.5 h-3.5" />}
+                    <div className="w-8 h-8 tactical-cut bg-[#181818] border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-[#ffb60e] group-hover:border-[#ffb60e]/30 transition-colors">
+                      {item.type === 'tournament' && <Trophy className="w-4 h-4" />}
+                      {item.type === 'team' && <Users className="w-4 h-4" />}
+                      {item.type === 'match' && <Crosshair className="w-4 h-4" />}
+                      {item.type === 'room' && <DoorOpen className="w-4 h-4" />}
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-200 group-hover:text-white">
+                      <p className="text-xs font-heading font-bold text-slate-200 group-hover:text-white uppercase tracking-wide">
                         {item.title}
                       </p>
-                      <p className="text-[11px] text-slate-400 truncate max-w-sm">
+                      <p className="text-[11px] text-slate-400 truncate max-w-sm font-sans">
                         {item.subtitle}
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition-colors" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-[#ffb60e] transition-colors" />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="px-4 py-2 bg-slate-950 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between items-center">
+        <div className="px-4 py-2 bg-[#0a0a0a] border-t border-white/10 text-[10px] text-slate-400 font-mono flex justify-between items-center">
           <span>Search tournaments, teams, character IDs, or maps</span>
-          <span>Esc to exit</span>
+          <span className="text-[#ffb60e]">ESC TO EXIT</span>
         </div>
       </div>
     </div>

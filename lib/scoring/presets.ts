@@ -1,9 +1,9 @@
 import { ScoringRuleConfig } from './types';
 
 /**
- * Official BGIS 2024 / 2025 10-Point Scoring System
- * 1st: 10, 2nd: 6, 3rd: 5, 4th: 4, 5th: 3, 6th: 2, 7th: 1, 8th: 1, 9-16: 0
- * 1 Kill = 1 Point
+ * Official BGIS 2024 / 2025 10-Point Scoring System (Default Standard)
+ * 1st: 10 pts, 2nd: 6 pts, 3rd: 5 pts, 4th: 4 pts, 5th: 3 pts, 6th: 2 pts, 7th: 1 pt, 8th: 1 pt, 9-16: 0 pts
+ * 1 Kill = 1.0 Point
  */
 export const BGIS_10_POINT_SYSTEM: ScoringRuleConfig = {
   name: 'Official BGIS 10-Point System',
@@ -37,9 +37,9 @@ export const BGIS_10_POINT_SYSTEM: ScoringRuleConfig = {
 };
 
 /**
- * BMPS 15-Point System
- * 1st: 15, 2nd: 12, 3rd: 10, 4th: 8, 5th: 6, 6th: 4, 7th: 2, 8-12: 1, 13-16: 0
- * 1 Kill = 1 Point
+ * BMPS 15-Point System (Krafton BGMI Pro Series / SUPER format)
+ * 1st: 15 pts, 2nd: 12 pts, 3rd: 10 pts, 4th: 8 pts, 5th: 6 pts, 6th: 4 pts, 7th: 2 pts, 8-12: 1 pt, 13-16: 0 pts
+ * 1 Kill = 1.0 Point
  */
 export const BMPS_15_POINT_SYSTEM: ScoringRuleConfig = {
   name: 'BMPS 15-Point System',
@@ -74,8 +74,8 @@ export const BMPS_15_POINT_SYSTEM: ScoringRuleConfig = {
 
 /**
  * Classic PMCO 20-Point System
- * 1st: 20, 2nd: 14, 3rd: 10, 4th: 8, 5th: 7, 6th: 6, 7th: 5, 8th: 4, 9th: 3, 10th: 2, 11-16: 1
- * 1 Kill = 1 Point
+ * 1st: 20 pts, 2nd: 14 pts, 3rd: 10 pts, 4th: 8 pts, 5th: 7 pts, 6th: 6 pts, 7th: 5 pts, 8th: 4 pts, 9th: 3 pts, 10th: 2 pts, 11-16: 1 pt
+ * 1 Kill = 1.0 Point
  */
 export const PMCO_20_POINT_SYSTEM: ScoringRuleConfig = {
   name: 'Classic PMCO 20-Point System',
@@ -108,8 +108,40 @@ export const PMCO_20_POINT_SYSTEM: ScoringRuleConfig = {
   ],
 };
 
+/**
+ * Dictionary of all standard scoring presets
+ */
 export const SCORING_PRESETS: Record<string, ScoringRuleConfig> = {
   BGIS_10: BGIS_10_POINT_SYSTEM,
   BMPS_15: BMPS_15_POINT_SYSTEM,
   PMCO_20: PMCO_20_POINT_SYSTEM,
+  // Shorthand aliases for convenience
+  BGIS: BGIS_10_POINT_SYSTEM,
+  BMPS: BMPS_15_POINT_SYSTEM,
+  PMCO: PMCO_20_POINT_SYSTEM,
 };
+
+/**
+ * Retrieve a scoring preset by key, falling back to BGIS 10-Point if not found
+ */
+export function getScoringPreset(presetKey: string): ScoringRuleConfig {
+  return SCORING_PRESETS[presetKey] || BGIS_10_POINT_SYSTEM;
+}
+
+/**
+ * Factory to build a validated custom scoring rule config
+ */
+export function createCustomScoringRule(
+  params: Partial<ScoringRuleConfig> & { name: string }
+): ScoringRuleConfig {
+  return {
+    name: params.name,
+    placementPoints: params.placementPoints || { ...BGIS_10_POINT_SYSTEM.placementPoints },
+    killPointsPerElim: params.killPointsPerElim !== undefined ? params.killPointsPerElim : 1.0,
+    wwcdBonus: params.wwcdBonus !== undefined ? params.wwcdBonus : 0.0,
+    tieBreakers: params.tieBreakers && params.tieBreakers.length > 0
+      ? params.tieBreakers
+      : [...BGIS_10_POINT_SYSTEM.tieBreakers],
+    allowNegativeScores: params.allowNegativeScores ?? false,
+  };
+}

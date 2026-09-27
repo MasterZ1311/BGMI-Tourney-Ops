@@ -1,13 +1,15 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { GroupLockSchema } from '@/lib/validation/schemas';
+import { apiSuccess, handleRouteError } from '@/lib/services/api-response';
 
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const body = await req.json();
-    const { isLocked = true } = body;
+    const body = await req.json().catch(() => ({}));
+    const validated = GroupLockSchema.parse(body);
+    const { isLocked = true } = validated;
 
     await db.group.updateMany({
       where: { tournamentId: params.id },
@@ -24,11 +26,8 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json({ success: true, data: { isLocked } });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: { message: error.message || 'Failed to update group lock status' } },
-      { status: 500 }
-    );
+    return apiSuccess({ isLocked });
+  } catch (error: unknown) {
+    return handleRouteError(error, 'Failed to update group lock status', `/api/tournaments/${params.id}/groups/lock`);
   }
 }
