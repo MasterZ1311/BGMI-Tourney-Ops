@@ -34,8 +34,6 @@ export function Header({
   const router = useRouter();
   const pathname = usePathname();
   const [tournaments, setTournaments] = useState<TournamentOption[]>([]);
-  const [isSeeding, setIsSeeding] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
     fetch('/api/tournaments')
@@ -47,39 +45,6 @@ export function Header({
       })
       .catch((err) => console.error('Failed to load tournaments list', err));
   }, [pathname]);
-
-  const handleSeedDemo = async () => {
-    setIsSeeding(true);
-    try {
-      const res = await fetch('/api/demo/seed', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        window.location.href = `/tournaments/${data.data.tournamentId}`;
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSeeding(false);
-    }
-  };
-
-  const handleResetDemo = async () => {
-    if (!confirm('Are you sure you want to reset demo tournament data? All scores and matches will be reset to initial state.')) {
-      return;
-    }
-    setIsResetting(true);
-    try {
-      const res = await fetch('/api/demo/reset', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        window.location.reload();
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsResetting(false);
-    }
-  };
 
   return (
     <header className="border-b border-[#2e2e2e] bg-[#0c0c0c]/95 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-8 py-2.5">
@@ -163,29 +128,6 @@ export function Header({
             <span>Overlay</span>
             <ExternalLink className="w-3 h-3 text-gray-500" />
           </Link>
-
-          {/* Demo Controls */}
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={handleSeedDemo}
-              disabled={isSeeding}
-              className="text-xs bg-[#ffb60e]/10 hover:bg-[#ffb60e]/20 text-[#ffb60e] border border-[#ffb60e]/40 px-2.5 py-1.5 font-condensed uppercase tracking-wider font-semibold transition-colors flex items-center gap-1.5"
-              title="Load full 16-team realistic tournament"
-            >
-              <Radio className={`w-3.5 h-3.5 text-[#ffb60e] ${isSeeding ? 'animate-pulse' : ''}`} />
-              <span className="hidden md:inline">{isSeeding ? 'Loading...' : 'Demo'}</span>
-            </button>
-
-            <button
-              onClick={handleResetDemo}
-              disabled={isResetting}
-              className="text-xs bg-[#171716] hover:bg-[#1f1f1f] text-gray-300 border border-[#333333] px-2.5 py-1.5 transition-colors flex items-center gap-1.5 font-condensed uppercase tracking-wider"
-              title="Reset Demo Tournament"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 text-gray-400 ${isResetting ? 'animate-spin' : ''}`} />
-              <span className="hidden md:inline">Reset</span>
-            </button>
-          </div>
 
           {/* + New Tournament Button */}
           <Link

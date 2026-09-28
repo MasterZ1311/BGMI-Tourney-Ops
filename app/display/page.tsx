@@ -79,7 +79,7 @@ export default function PublicDisplayPage() {
               </span>
             </div>
             <h1 className="text-4xl font-teko uppercase font-bold text-white tracking-wider mt-1 leading-none">
-              {tournament?.name || 'BGMI INVITATIONAL CHAMPIONSHIP'}
+              {tournament?.name || 'NO ACTIVE TOURNAMENT'}
             </h1>
           </div>
         </div>
@@ -149,10 +149,12 @@ export default function PublicDisplayPage() {
                       <div className="flex flex-col items-center justify-center gap-2">
                         <Trophy className="w-10 h-10 text-gray-600 mb-1" />
                         <span className="text-base font-teko uppercase font-bold text-gray-300 tracking-wider">
-                          OFFICIAL STANDINGS IN PROGRESS
+                          {tournament ? 'OFFICIAL STANDINGS IN PROGRESS' : 'NO ACTIVE TOURNAMENT BROADCAST'}
                         </span>
                         <span className="text-xs text-gray-500">
-                          Match results will broadcast live upon referee verification.
+                          {tournament
+                            ? 'Match results will broadcast live upon referee verification.'
+                            : 'Create and launch a tournament in the Control Center to broadcast live standings.'}
                         </span>
                       </div>
                     </td>

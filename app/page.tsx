@@ -121,22 +121,22 @@ export default function RootHomePage() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <Link
+              href="/tournaments/new"
+              className="tactical-btn-gold px-8 py-3.5 text-sm uppercase tracking-wider font-heading font-black shadow-xl shadow-[#ffb60e]/20 transition-all flex items-center gap-2"
+            >
+              <PlusCircle className="w-5 h-5 text-black" />
+              <span>CREATE FIRST TOURNAMENT</span>
+            </Link>
+
             <button
               onClick={handleSeedDemo}
               disabled={isSeeding}
-              className="tactical-btn-gold px-8 py-3.5 text-sm uppercase tracking-wider font-heading font-black shadow-xl shadow-[#ffb60e]/20 transition-all flex items-center gap-2"
+              className="tactical-cut bg-[#151515] hover:bg-[#202020] text-slate-200 border border-white/10 hover:border-[#ffb60e]/50 px-6 py-3.5 text-sm uppercase tracking-wider font-heading font-black transition-all flex items-center gap-2"
             >
-              <Radio className={`w-4 h-4 ${isSeeding ? 'animate-pulse' : ''}`} />
-              <span>{isSeeding ? 'SEEDING TOURNAMENT...' : 'LOAD OFFICIAL DEMO TOURNAMENT'}</span>
+              <Radio className={`w-4 h-4 text-[#ffb60e] ${isSeeding ? 'animate-pulse' : ''}`} />
+              <span>{isSeeding ? 'SEEDING TOURNAMENT...' : 'LOAD SAMPLE TOURNAMENT TEMPLATE'}</span>
             </button>
-
-            <Link
-              href="/tournaments/new"
-              className="tactical-cut bg-[#151515] hover:bg-[#202020] text-slate-200 border border-white/10 hover:border-[#ffb60e]/50 px-8 py-3.5 text-sm uppercase tracking-wider font-heading font-black transition-all flex items-center gap-2"
-            >
-              <PlusCircle className="w-4 h-4 text-[#ffb60e]" />
-              <span>CREATE TOURNAMENT WIZARD</span>
-            </Link>
           </div>
         </div>
 
