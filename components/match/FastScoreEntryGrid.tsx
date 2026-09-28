@@ -258,7 +258,7 @@ export function FastScoreEntryGrid({
         {match?.map && (
           <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
             <img
-              src={`/images/maps/${match.map.toLowerCase()}.jpg`}
+              src={`/images/maps/${(match?.map || 'erangel').toLowerCase()}.jpg`}
               alt=""
               className="w-full h-full object-cover object-center"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}

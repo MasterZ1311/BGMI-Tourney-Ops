@@ -75,6 +75,7 @@ module.exports = {
       },
       fontFamily: {
         teko: ["Teko", "sans-serif"],
+        heading: ["Teko", "sans-serif"],
         condensed: ["Roboto Condensed", "sans-serif"],
         sans: ["Noto Sans", "sans-serif"],
       },

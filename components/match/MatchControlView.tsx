@@ -215,7 +215,7 @@ export function MatchControlView({ tournamentId }: { tournamentId: string }) {
             {/* Dynamic Map Background Artwork */}
             <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
               <img
-                src={`/images/maps/${activeMatch.map.toLowerCase()}.jpg`}
+                src={`/images/maps/${(activeMatch.map || 'erangel').toLowerCase()}.jpg`}
                 alt=""
                 className="w-full h-full object-cover object-center"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}

@@ -32,15 +32,28 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
   const [copiedPass, setCopiedPass] = useState(false);
   const [copiedFormatted, setCopiedFormatted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [standings, setStandings] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!tournament?.id) return;
+    fetch(`/api/tournaments/${tournament.id}/leaderboard`)
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success && res.data?.standings) {
+          setStandings(res.data.standings);
+        }
+      })
+      .catch((err) => console.error('Failed to fetch overview leaderboard:', err));
+  }, [tournament?.id]);
 
   if (!tournament) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center text-slate-400">
-        <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto mb-2" />
-        <p className="font-bold text-white">Tournament data unavailable</p>
+      <div className="bg-[#171716] border border-[#333333] tactical-cut p-8 text-center text-gray-400">
+        <AlertTriangle className="w-8 h-8 text-[#ffb60e] mx-auto mb-2" />
+        <p className="font-teko uppercase text-xl font-bold text-white">Tournament data unavailable</p>
         <button
           onClick={onRefresh}
-          className="mt-3 px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg"
+          className="mt-3 px-4 py-1.5 text-xs font-teko uppercase font-bold text-black tactical-btn-gold text-sm shadow-md"
         >
           Refresh
         </button>
@@ -171,7 +184,7 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
           {/* Dynamic Map Background Artwork */}
           <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
             <img
-              src={`/images/maps/${currentMatch.map.toLowerCase()}.jpg`}
+              src={`/images/maps/${(currentMatch.map || 'erangel').toLowerCase()}.jpg`}
               alt=""
               className="w-full h-full object-cover object-center"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -303,15 +316,15 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
 
       {/* Fallback if no match scheduled */}
       {!currentMatch && (
-        <div className="bg-slate-900/60 border border-dashed border-slate-800 rounded-xl p-6 text-center">
-          <Clock className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-          <h4 className="text-sm font-bold text-slate-300">No Active or Scheduled Match</h4>
-          <p className="text-xs text-slate-500 mt-1">
+        <div className="bg-[#171716] border border-dashed border-[#333333] tactical-cut p-6 text-center">
+          <Clock className="w-8 h-8 text-[#ffb60e] mx-auto mb-2" />
+          <h4 className="text-lg font-teko uppercase font-bold text-gray-200">No Active or Scheduled Match</h4>
+          <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-1">
             Generate tournament match fixtures to begin room operations and scorekeeping.
           </p>
           <button
             onClick={() => onNavigateTab('schedule')}
-            className="mt-3 px-3.5 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors"
+            className="mt-3 px-4 py-1.5 text-xs font-teko uppercase font-bold text-black tactical-btn-gold text-sm shadow-md"
           >
             Go to Schedule
           </button>
@@ -430,7 +443,36 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#262626] font-medium font-condensed">
-                {(!tournament.teams || tournament.teams.length === 0) ? (
+                {standings.length > 0 ? (
+                  standings.slice(0, 6).map((standing: any, index: number) => (
+                    <tr key={standing.teamId || index} className={`hover:bg-[#202020] transition-colors ${
+                      index === 0 ? 'bg-[#ffb60e]/5 border-l-2 border-l-[#ffb60e]' : ''
+                    }`}>
+                      <td className="py-2.5 px-3 font-teko text-base font-bold text-gray-300">
+                        {index === 0 ? <span className="text-[#ffb60e]">#1</span> : `#${standing.rank || index + 1}`}
+                      </td>
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-white text-sm">{standing.teamName}</span>
+                          <span className="text-[10px] text-gray-500 font-condensed font-bold">[{standing.teamTag}]</span>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-3 text-center text-gray-400 font-bold">{standing.matchesPlayed ?? completedMatches}</td>
+                      <td className="py-2.5 px-3 text-center">
+                        {standing.wwcdCount > 0 ? (
+                          <span className="inline-flex items-center gap-1 text-[#ffb60e] font-bold">
+                            🍗 {standing.wwcdCount}
+                          </span>
+                        ) : (
+                          <span className="text-gray-500">0</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-black text-[#ffb60e] text-base">
+                        {standing.totalPoints ?? 0}
+                      </td>
+                    </tr>
+                  ))
+                ) : (!tournament.teams || tournament.teams.length === 0) ? (
                   <tr>
                     <td colSpan={5} className="py-8 text-center text-gray-500">
                       <div className="flex flex-col items-center justify-center gap-1.5">
@@ -442,11 +484,11 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
                   </tr>
                 ) : (
                   tournament.teams.slice(0, 6).map((team: any, index: number) => (
-                    <tr key={team.id} className={`hover:bg-[#202020] transition-colors ${
+                    <tr key={team.id || index} className={`hover:bg-[#202020] transition-colors ${
                       index === 0 ? 'bg-[#ffb60e]/5 border-l-2 border-l-[#ffb60e]' : ''
                     }`}>
                       <td className="py-2.5 px-3 font-teko text-base font-bold text-gray-300">
-                        {index === 0 ? <span className="text-[#ffb60e]">#1</span> : `#${index + 1}`}
+                        #{index + 1}
                       </td>
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2">
@@ -455,22 +497,8 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
                         </div>
                       </td>
                       <td className="py-2.5 px-3 text-center text-gray-400 font-bold">{completedMatches}</td>
-                      <td className="py-2.5 px-3 text-center">
-                        {index === 0 ? (
-                          <span className="inline-flex items-center gap-1 text-[#ffb60e] font-bold">
-                            🍗 1
-                          </span>
-                        ) : index === 2 ? (
-                          <span className="inline-flex items-center gap-1 text-[#ffb60e] font-bold">
-                            🍗 1
-                          </span>
-                        ) : (
-                          <span className="text-gray-500">0</span>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-black text-[#ffb60e] text-base">
-                        {index === 0 ? 35 : index === 1 ? 28 : index === 2 ? 26 : 22 - index * 2}
-                      </td>
+                      <td className="py-2.5 px-3 text-center text-gray-500">0</td>
+                      <td className="py-2.5 px-3 text-right font-black text-[#ffb60e] text-base">0</td>
                     </tr>
                   ))
                 )}

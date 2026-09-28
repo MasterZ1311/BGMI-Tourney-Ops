@@ -79,7 +79,7 @@ export function TournamentSubNav({ activeTab, onTabChange, counts }: SubNavProps
               <span>{tab.label}</span>
               {tab.badge !== undefined && tab.badge > 0 && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 font-condensed font-black ${
+                  className={`text-[10px] px-1.5 py-0.5 font-condensed font-black ${
                     isActive
                       ? 'bg-black text-[#ffb60e]'
                       : 'bg-[#222222] text-[#ffb60e] border border-[#ffb60e]/40'

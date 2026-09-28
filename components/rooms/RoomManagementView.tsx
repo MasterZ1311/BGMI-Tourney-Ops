@@ -158,7 +158,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                           value={editForm.roomId}
                           onChange={(e) => setEditForm({ ...editForm, roomId: e.target.value })}
                           placeholder="e.g. 8923011"
-                          className="bg-slate-950 border border-slate-700 text-white rounded px-2 py-1 text-xs font-mono w-28"
+                          className="bg-[#101010] border border-[#333333] focus:border-[#ffb60e] text-white tactical-cut px-2 py-1 text-xs font-mono w-28 outline-none"
                         />
                       ) : (
                         <div className="flex items-center gap-1.5 font-mono">
@@ -166,7 +166,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                           {room?.roomId && (
                             <button
                               onClick={() => copyText(room.roomId, `id-${match.id}`)}
-                              className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                              className="text-gray-400 hover:text-white p-1 tactical-cut hover:bg-[#262626] transition-colors"
                               title="Copy Room ID"
                             >
                               {copiedKey === `id-${match.id}` ? (
@@ -187,7 +187,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                           value={editForm.password}
                           onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
                           placeholder="Password"
-                          className="bg-slate-950 border border-slate-700 text-white rounded px-2 py-1 text-xs font-mono w-28"
+                          className="bg-[#101010] border border-[#333333] focus:border-[#ffb60e] text-white tactical-cut px-2 py-1 text-xs font-mono w-28 outline-none"
                         />
                       ) : (
                         <div className="flex items-center gap-1.5 font-mono">
@@ -202,7 +202,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                             <>
                               <button
                                 onClick={() => togglePasswordVisibility(match.id)}
-                                className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                                className="text-gray-400 hover:text-white p-1 tactical-cut hover:bg-[#262626] transition-colors"
                                 title={isPasswordVisible ? 'Hide Password' : 'Show Password'}
                               >
                                 {isPasswordVisible ? (
@@ -213,7 +213,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                               </button>
                               <button
                                 onClick={() => copyText(room.password, `pass-${match.id}`)}
-                                className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                                className="text-gray-400 hover:text-white p-1 tactical-cut hover:bg-[#262626] transition-colors"
                                 title="Copy Password"
                               >
                                 {copiedKey === `pass-${match.id}` ? (
@@ -233,7 +233,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                         <select
                           value={editForm.status}
                           onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                          className="bg-slate-950 border border-slate-700 text-white rounded px-2 py-1 text-xs"
+                          className="bg-[#101010] border border-[#333333] focus:border-[#ffb60e] text-white tactical-cut px-2 py-1 text-xs outline-none font-condensed uppercase tracking-wider"
                         >
                           <option value="NOT_CREATED">NOT_CREATED</option>
                           <option value="READY">READY</option>
@@ -244,13 +244,13 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                         </select>
                       ) : (
                         <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                          className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 tactical-cut ${
                             room?.status === 'LIVE'
                               ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
                               : room?.status === 'OPEN'
                               ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
                               : room?.status === 'COMPLETED' || room?.status === 'CLOSED'
-                              ? 'bg-slate-800 text-slate-400'
+                              ? 'bg-[#222222] text-gray-400 border border-[#333333]'
                               : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                           }`}
                         >
@@ -263,7 +263,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                       {isEditing ? (
                         <button
                           onClick={() => handleSaveRoom(match.id)}
-                          className="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded flex items-center gap-1 ml-auto"
+                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold font-condensed uppercase tracking-wider tactical-cut flex items-center gap-1 ml-auto transition-colors"
                         >
                           <Save className="w-3.5 h-3.5" /> Save
                         </button>
@@ -272,7 +272,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                           {room?.status !== 'OPEN' && room?.status !== 'LIVE' && room?.status !== 'CLOSED' && (
                             <button
                               onClick={() => updateRoomStatus(match.id, 'OPEN')}
-                              className="px-2.5 py-1 text-[10px] font-bold uppercase bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
+                              className="px-2.5 py-1 text-[10px] font-bold uppercase font-condensed tracking-wider bg-blue-600 hover:bg-blue-500 text-white tactical-cut transition-colors"
                             >
                               Open Lobby
                             </button>
@@ -281,7 +281,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
                           {room?.status === 'OPEN' && (
                             <button
                               onClick={() => updateRoomStatus(match.id, 'LIVE')}
-                              className="px-2.5 py-1 text-[10px] font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white rounded transition-colors"
+                              className="px-2.5 py-1 text-[10px] font-bold uppercase font-condensed tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white tactical-cut transition-colors"
                             >
                               Mark Live
                             </button>
@@ -289,7 +289,7 @@ export function RoomManagementView({ tournamentId }: { tournamentId: string }) {
 
                           <button
                             onClick={() => handleEditClick(match)}
-                            className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800"
+                            className="p-1 text-gray-400 hover:text-white tactical-cut hover:bg-[#262626] transition-colors"
                             title="Edit Credentials"
                           >
                             <Edit className="w-3.5 h-3.5" />

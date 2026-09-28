@@ -173,32 +173,32 @@ export function GroupManagementView({ tournamentId }: { tournamentId: string }) 
             key={group.id}
             className="bg-[#171716] border border-[#333333] tactical-cut p-4 shadow-2xl space-y-3"
           >
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-2 border-b border-[#2e2e2e]">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-white text-sm">{group.name}</span>
-                {group.isLocked && <Lock className="w-3 h-3 text-amber-400" />}
+                <span className="font-teko uppercase text-base font-bold text-white tracking-wide">{group.name}</span>
+                {group.isLocked && <Lock className="w-3 h-3 text-[#ffb60e]" />}
               </div>
-              <span className="text-[11px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                {group.teams?.length || 0} Squads
+              <span className="text-[10px] font-condensed font-black text-[#ffb60e] bg-[#ffb60e]/15 px-2 py-0.5 tactical-cut border border-[#ffb60e]/30 uppercase">
+                {group.teams?.length || 0} SQUADS
               </span>
             </div>
 
             <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
               {group.teams?.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-6">
+                <p className="text-xs text-gray-400 font-condensed uppercase tracking-wider text-center py-6">
                   No squads assigned yet. Click &quot;Randomize Groups&quot; to populate.
                 </p>
               ) : (
                 group.teams?.map((t: any, idx: number) => (
                   <div
                     key={t.id}
-                    className="flex items-center justify-between p-2 rounded-lg bg-slate-950/80 border border-slate-800/80 text-xs"
+                    className="flex items-center justify-between p-2 tactical-cut bg-[#101010] border border-[#333333] text-xs font-condensed hover:border-[#ffb60e]/40 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-slate-500 font-mono text-[10px] w-4">{idx + 1}.</span>
-                      <span className="font-semibold text-slate-200">{t.name}</span>
+                      <span className="text-gray-400 font-condensed font-bold text-[11px] w-4">{idx + 1}.</span>
+                      <span className="font-bold text-white text-sm">{t.name}</span>
                     </div>
-                    <span className="text-[10px] font-mono text-slate-400 font-bold">[{t.tag}]</span>
+                    <span className="text-[10px] font-condensed text-[#ffb60e] font-bold">[{t.tag}]</span>
                   </div>
                 ))
               )}

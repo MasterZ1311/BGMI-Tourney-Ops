@@ -131,7 +131,7 @@ export function TeamManagementView({ tournamentId }: { tournamentId: string }) {
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead>
-              <tr className="border-b border-white/10 text-slate-400 font-mono text-[11px] bg-[#0a0a0a] uppercase tracking-wider">
+              <tr className="border-b border-white/10 text-gray-400 font-condensed font-bold text-xs bg-[#0a0a0a] uppercase tracking-wider">
                 <th className="py-3.5 px-4 font-bold">Team</th>
                 <th className="py-3.5 px-4 font-bold">Group</th>
                 <th className="py-3.5 px-4 font-bold">Starting Roster (4)</th>

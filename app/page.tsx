@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   Trophy,
@@ -95,12 +96,24 @@ export default function RootHomePage() {
   if (!activeTournament) {
     return (
       <div className="max-w-4xl mx-auto py-16 px-4 space-y-12">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 tactical-cut bg-[#ffb60e] flex items-center justify-center text-black mx-auto shadow-2xl shadow-[#ffb60e]/20">
-            <Trophy className="w-9 h-9" />
+        <div className="text-center space-y-5">
+          <div className="flex justify-center items-center">
+            <div className="relative w-64 sm:w-80 h-20 sm:h-28 transition-transform hover:scale-105 duration-300">
+              <Image
+                src="/images/logos/BGMI_logo.svg"
+                alt="Battlegrounds Mobile India"
+                fill
+                className="object-contain drop-shadow-[0_8px_24px_rgba(255,182,14,0.2)]"
+                priority
+              />
+            </div>
           </div>
-          <h1 className="text-5xl font-heading font-black text-white tracking-wider uppercase">
-            BGMI Tournament Control Center
+          <div className="inline-flex items-center gap-2 px-3 py-1 tactical-cut bg-[#ffb60e]/15 border border-[#ffb60e]/40 text-[#ffb60e] font-condensed font-black tracking-widest text-xs uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ffb60e] animate-pulse" />
+            <span>TOURNAMENT CONTROL CENTER // ESPORTS OPS</span>
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-heading font-black text-white tracking-wider uppercase">
+            Command Center Architecture
           </h1>
           <p className="text-slate-300 max-w-xl mx-auto text-sm leading-relaxed font-sans">
             The authoritative esports operations hub for Battlegrounds Mobile India organizers.

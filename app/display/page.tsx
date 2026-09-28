@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Trophy, Flame, Tv, Crosshair, MapPin, Radio, Loader2 } from 'lucide-react';
 
 export default function PublicDisplayPage() {
@@ -10,6 +11,7 @@ export default function PublicDisplayPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [hasError, setHasError] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const fetchDisplayData = async () => {
     try {
@@ -45,6 +47,7 @@ export default function PublicDisplayPage() {
   };
 
   useEffect(() => {
+    setMounted(true);
     fetchDisplayData();
     // Auto-refresh every 15 seconds for live broadcast stage display
     const interval = setInterval(fetchDisplayData, 15000);
@@ -56,8 +59,15 @@ export default function PublicDisplayPage() {
       {/* Top Broadcast Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#2e2e2e]">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-[#ffb60e] flex items-center justify-center text-black tactical-cut shadow-xl shadow-[#ffb60e]/20">
-            <Trophy className="w-9 h-9 text-black" />
+          <div className="relative w-16 h-16 bg-black border-2 border-[#ffb60e] flex items-center justify-center tactical-cut shadow-xl shadow-[#ffb60e]/25 overflow-hidden p-1.5">
+            <Image
+              src="/images/logos/bgmi_icon.svg"
+              alt="BGMI"
+              width={56}
+              height={56}
+              className="w-full h-full object-contain"
+              priority
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -76,8 +86,21 @@ export default function PublicDisplayPage() {
 
         {/* Live Match Info Ticker */}
         {currentMatch && (
-          <div className="flex items-center gap-4 bg-[#171716] border border-[#333333] px-5 py-3 tactical-cut shadow-2xl">
-            <div className="text-right">
+          <div className="relative overflow-hidden flex items-center gap-4 bg-[#171716] border border-[#333333] px-5 py-3 tactical-cut shadow-2xl">
+            {/* Dynamic Map Background Artwork */}
+            {currentMatch.map && (
+              <div className="absolute inset-0 pointer-events-none opacity-25 overflow-hidden">
+                <img
+                  src={`/images/maps/${currentMatch.map.toLowerCase()}.jpg`}
+                  alt=""
+                  className="w-full h-full object-cover object-center"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/85 to-transparent" />
+              </div>
+            )}
+
+            <div className="relative z-10 text-right">
               <span className="text-[10px] text-gray-400 uppercase font-condensed font-bold tracking-wider block">
                 {currentMatch.status === 'LIVE' ? 'LIVE NOW IN-GAME' : 'NEXT UPCOMING LOBBY'}
               </span>
@@ -85,7 +108,7 @@ export default function PublicDisplayPage() {
                 {currentMatch.title} <span className="text-[#ffb60e]">•</span> {currentMatch.map}
               </p>
             </div>
-            <div className="w-12 h-12 bg-[#101010] border border-[#333333] tactical-cut flex items-center justify-center text-[#ffb60e] font-teko font-bold text-2xl">
+            <div className="relative z-10 w-12 h-12 bg-[#101010]/90 border border-[#ffb60e]/40 tactical-cut flex items-center justify-center text-[#ffb60e] font-teko font-bold text-2xl">
               #{currentMatch.matchNumber}
             </div>
           </div>
@@ -228,8 +251,8 @@ export default function PublicDisplayPage() {
               ● FEED RECONNECTING (15S POLLING)
             </span>
           ) : (
-            <span className="text-[#ffb60e] flex items-center gap-1">
-              ● LIVE SYNCED ({lastRefreshed.toLocaleTimeString()})
+            <span className="text-[#ffb60e] flex items-center gap-1" suppressHydrationWarning>
+              ● LIVE SYNCED ({mounted && lastRefreshed ? lastRefreshed.toLocaleTimeString() : 'LIVE FEED READY'})
             </span>
           )}
         </div>

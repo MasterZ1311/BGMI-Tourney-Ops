@@ -102,7 +102,7 @@ export function ScheduleView({
       </div>
 
       {error && (
-        <div className="p-3 rounded-lg bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300">
+        <div className="p-3 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-condensed font-bold">
           {error}
         </div>
       )}
@@ -130,7 +130,7 @@ export function ScheduleView({
               {/* Dynamic Map Background Artwork */}
               <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
                 <img
-                  src={`/images/maps/${match.map.toLowerCase()}.jpg`}
+                  src={`/images/maps/${(match.map || 'erangel').toLowerCase()}.jpg`}
                   alt=""
                   className="w-full h-full object-cover object-center"
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}

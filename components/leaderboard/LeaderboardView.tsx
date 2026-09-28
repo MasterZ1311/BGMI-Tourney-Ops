@@ -155,16 +155,16 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
 
       {/* Error State Banner */}
       {error && (
-        <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 flex items-center justify-between">
+        <div className="p-3 tactical-cut bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 flex items-center justify-between font-condensed font-bold">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
             <span>{error}</span>
           </div>
           <button
             onClick={fetchLeaderboard}
-            className="px-2.5 py-1 text-[11px] font-bold bg-rose-500/30 hover:bg-rose-500/50 text-white rounded transition-colors"
+            className="px-2.5 py-1 text-[11px] font-bold bg-rose-500/30 hover:bg-rose-500/50 text-white tactical-cut transition-colors"
           >
-            Retry
+            RETRY
           </button>
         </div>
       )}

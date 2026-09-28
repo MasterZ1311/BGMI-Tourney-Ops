@@ -387,14 +387,35 @@ export function TournamentWizard() {
                           setFormData({ ...formData, maps: newMaps });
                         }
                       }}
-                      className={`p-3 text-center tactical-cut font-condensed uppercase tracking-wider text-xs font-bold transition-all border ${
+                      className={`relative overflow-hidden p-3 text-center tactical-cut font-condensed uppercase tracking-wider text-xs font-bold transition-all border group ${
                         isSelected
-                          ? 'bg-[#ffb60e] text-black border-[#ffb60e] shadow-md shadow-[#ffb60e]/20'
-                          : 'bg-[#121212] text-gray-400 border-[#333333] hover:border-gray-500'
+                          ? 'border-[#ffb60e] text-white shadow-lg shadow-[#ffb60e]/20 ring-1 ring-[#ffb60e]'
+                          : 'bg-[#121212] text-gray-400 border-[#333333] hover:border-gray-500 opacity-60 hover:opacity-90'
                       }`}
                     >
-                      <div className="text-base font-teko tracking-wider">{mapName}</div>
-                      <div className="text-[10px] font-extrabold">{isSelected ? '✓ ACTIVE' : 'DISABLED'}</div>
+                      {/* Map Thumbnail Background */}
+                      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                        <img
+                          src={`/images/maps/${mapName.toLowerCase()}.jpg`}
+                          alt=""
+                          className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                        <div className={`absolute inset-0 ${
+                          isSelected
+                            ? 'bg-gradient-to-t from-black/90 via-black/60 to-black/40'
+                            : 'bg-black/80'
+                        }`} />
+                      </div>
+
+                      <div className="relative z-10">
+                        <div className={`text-lg font-teko tracking-wider leading-tight ${isSelected ? 'text-[#ffb60e]' : 'text-gray-300'}`}>
+                          {mapName}
+                        </div>
+                        <div className={`text-[10px] font-extrabold ${isSelected ? 'text-emerald-400' : 'text-gray-500'}`}>
+                          {isSelected ? '✓ ACTIVE' : 'DISABLED'}
+                        </div>
+                      </div>
                     </button>
                   );
                 })}
@@ -455,29 +476,29 @@ export function TournamentWizard() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-semibold text-gray-300 block mb-1 font-condensed uppercase tracking-wider">
                   No-Show Grace Period (Minutes)
                 </label>
                 <input
                   type="number"
                   value={formData.noShowGraceMinutes}
                   onChange={(e) => setFormData({ ...formData, noShowGraceMinutes: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#101010] border border-[#333333] focus:border-[#ffb60e] text-white tactical-cut px-3 py-2 text-sm outline-none"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-semibold text-gray-300 block mb-1 font-condensed uppercase tracking-wider">
                   Dispute Window Post Match (Minutes)
                 </label>
                 <input
                   type="number"
                   value={formData.disputeWindowMinutes}
                   onChange={(e) => setFormData({ ...formData, disputeWindowMinutes: Number(e.target.value) })}
-                  className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full bg-[#101010] border border-[#333333] focus:border-[#ffb60e] text-white tactical-cut px-3 py-2 text-sm outline-none"
                 />
               </div>
             </div>
-            <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 text-xs text-slate-400 space-y-1">
+            <div className="p-3 bg-[#101010] tactical-cut border border-[#333333] text-xs text-gray-400 space-y-1 font-condensed">
               <p>• Emulator detection strictly enforced: All players must use handheld mobile devices.</p>
               <p>• Tie-Breaker Priority: 1. Total WWCDs, 2. Placement Points, 3. Kill Points, 4. Best Match.</p>
             </div>
@@ -491,9 +512,9 @@ export function TournamentWizard() {
               Review & Commit Tournament
             </h2>
 
-            <div className="bg-slate-950/80 rounded-xl p-4 border border-slate-800 text-xs space-y-2 text-slate-300 font-mono">
+            <div className="bg-[#101010] tactical-cut p-4 border border-[#333333] text-xs space-y-2 text-gray-300 font-condensed">
               <div className="flex justify-between">
-                <span className="text-slate-500">Name:</span>
+                <span className="text-gray-500">Name:</span>
                 <span className="text-white font-bold">{formData.name}</span>
               </div>
               <div className="flex justify-between">
