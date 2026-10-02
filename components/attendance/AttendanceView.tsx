@@ -143,10 +143,10 @@ export function AttendanceView({ tournamentId }: { tournamentId: string }) {
 
           <button
             onClick={handleBulkMarkPresent}
-            className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-4 py-1.5 flex items-center gap-1.5 text-sm shadow-md shadow-[#ffb60e]/20"
+            className="tactical-btn-gold px-4 py-2 text-xs flex items-center gap-1.5 shadow-md shadow-[#ffb60e]/20"
           >
-            <CheckCheck className="w-4 h-4 text-black" />
-            MARK ALL VERIFIED AS PRESENT
+            <CheckCheck className="w-4 h-4 text-black stroke-[2.5]" />
+            <span>MARK ALL VERIFIED AS PRESENT</span>
           </button>
         </div>
       </div>

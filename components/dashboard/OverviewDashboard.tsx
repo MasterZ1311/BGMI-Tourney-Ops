@@ -107,7 +107,7 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
   return (
     <div className="space-y-6">
       {/* Top Operations Command Bar */}
-      <div className="bg-[#171716] border border-[#333333] p-5 shadow-2xl relative">
+      <div className="hud-frame bg-[#171716] border border-[#333333] p-5 shadow-2xl relative bgmi-radial-vignette">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -123,7 +123,7 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
                 {tournament.format.replace(/_/g, ' ')}
               </span>
             </div>
-            <h1 className="text-3xl font-teko uppercase font-bold tracking-wider text-white leading-none">
+            <h1 className="text-3xl sm:text-4xl font-teko uppercase font-bold tracking-wider text-white leading-none">
               {tournament.name}
             </h1>
             <p className="text-xs font-condensed uppercase tracking-wider text-gray-400 mt-1">
@@ -135,7 +135,7 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => onNavigateTab('matches')}
-              className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-3.5 py-1.5 flex items-center gap-1.5 text-base shadow-md shadow-[#ffb60e]/20"
+              className="tactical-btn-gold px-3.5 py-1.5 text-xs flex items-center gap-1.5 shadow-md shadow-[#ffb60e]/20"
             >
               <Play className="w-3.5 h-3.5 fill-current text-black" />
               <span>MATCH CONTROL</span>
@@ -179,17 +179,17 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
       {/* Current Match Ticker & Room Card */}
       {currentMatch && (
         <div className={`bg-[#171716] border border-[#333333] p-5 relative overflow-hidden tactical-cut ${
-          currentMatch.status === 'LIVE' ? 'border-l-4 border-l-[#ffb60e] shadow-xl shadow-[#ffb60e]/10' : ''
+          currentMatch.status === 'LIVE' ? 'border-l-4 border-l-[#ffb60e] shadow-2xl shadow-[#ffb60e]/15' : ''
         }`}>
           {/* Dynamic Map Background Artwork */}
-          <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
             <img
               src={`/images/maps/${(currentMatch.map || 'erangel').toLowerCase()}.jpg`}
               alt=""
               className="w-full h-full object-cover object-center"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/85 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/80 to-transparent" />
           </div>
 
           {currentMatch.status === 'LIVE' && (
@@ -198,14 +198,14 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 bg-[#101010] border border-[#333333] flex flex-col items-center justify-center text-center tactical-cut">
-                <span className="text-[10px] uppercase font-condensed font-bold text-gray-500">MATCH</span>
+              <div className="w-14 h-14 bg-[#101010]/90 border border-[#ffb60e]/40 flex flex-col items-center justify-center text-center tactical-cut shadow-md">
+                <span className="text-[10px] uppercase font-condensed font-bold text-gray-400">MATCH</span>
                 <span className="text-2xl font-teko font-bold text-[#ffb60e] leading-none">#{currentMatch.matchNumber}</span>
               </div>
               <div>
                 <div className="flex items-center gap-2.5">
-                  <h3 className="text-xl font-teko uppercase font-bold tracking-wider text-white">{currentMatch.title}</h3>
-                  <span className={`text-[10px] font-condensed font-black uppercase px-2 py-0.5 tactical-cut ${
+                  <h3 className="text-2xl font-teko uppercase font-bold tracking-wider text-white leading-tight">{currentMatch.title}</h3>
+                  <span className={`text-[10px] font-condensed font-black uppercase px-2.5 py-0.5 tactical-cut ${
                     currentMatch.status === 'LIVE'
                       ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
                       : 'bg-[#ffb60e]/15 text-[#ffb60e] border border-[#ffb60e]/40'
@@ -213,10 +213,16 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
                     {currentMatch.status}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-400 mt-1 font-condensed font-bold uppercase tracking-wide">
-                  <span>MAP: <strong className="text-white">{currentMatch.map}</strong></span>
-                  <span>MODE: <strong className="text-white">{currentMatch.perspective}</strong></span>
-                  <span>RESULTS: <strong className="text-[#ffb60e]">{currentMatch.resultStatus}</strong></span>
+                <div className="flex items-center gap-3 text-xs text-gray-300 mt-1 font-condensed font-bold uppercase tracking-wider">
+                  <span className="px-2 py-0.5 bg-black/60 border border-white/10 tactical-cut text-[#ffb60e]">
+                    MAP: <strong>{currentMatch.map}</strong>
+                  </span>
+                  <span className="px-2 py-0.5 bg-black/60 border border-white/10 tactical-cut text-white">
+                    PERSPECTIVE: <strong>{currentMatch.perspective}</strong>
+                  </span>
+                  <span className="text-gray-400">
+                    STATUS: <strong className="text-white">{currentMatch.resultStatus}</strong>
+                  </span>
                 </div>
               </div>
             </div>
@@ -334,9 +340,9 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
       {/* 4 Operations Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Teams Metric */}
-        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+        <div className="bg-[#171716] border border-[#333333] border-t-2 border-t-[#ffb60e] p-4 tactical-cut relative hover:border-[#ffb60e]/50 transition-all shadow-lg">
           <div className="flex items-center justify-between text-gray-400 mb-2">
-            <span className="text-xs font-condensed font-bold uppercase tracking-wider">SQUADS</span>
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider text-gray-300">SQUADS</span>
             <UserCheck className="w-4 h-4 text-[#ffb60e]" />
           </div>
           <div className="flex items-baseline gap-2">
@@ -350,32 +356,32 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
         </div>
 
         {/* Matches Metric */}
-        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+        <div className="bg-[#171716] border border-[#333333] border-t-2 border-t-cyan-500 p-4 tactical-cut relative hover:border-cyan-500/50 transition-all shadow-lg">
           <div className="flex items-center justify-between text-gray-400 mb-2">
-            <span className="text-xs font-condensed font-bold uppercase tracking-wider">MATCHES</span>
-            <Flame className="w-4 h-4 text-[#ffb60e]" />
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider text-gray-300">MATCHES</span>
+            <Flame className="w-4 h-4 text-cyan-400" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-teko font-bold text-white">{completedMatches} / {totalMatches}</span>
-            <span className="text-xs text-gray-400 font-condensed uppercase font-bold">DONE</span>
+            <span className="text-xs text-cyan-400 font-condensed uppercase font-bold">COMPLETED</span>
           </div>
           <div className="mt-3 flex items-center justify-between text-[11px] font-condensed text-gray-400 pt-2 border-t border-[#2e2e2e]">
             <span>REMAINING: <strong className="text-white">{remainingMatches}</strong></span>
-            <span className="text-[#ffb60e] font-bold">
+            <span className="text-cyan-400 font-bold">
               {totalMatches > 0 ? Math.round((completedMatches / totalMatches) * 100) : 0}% COMPLETE
             </span>
           </div>
         </div>
 
         {/* Attendance Metric */}
-        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+        <div className="bg-[#171716] border border-[#333333] border-t-2 border-t-emerald-500 p-4 tactical-cut relative hover:border-emerald-500/50 transition-all shadow-lg">
           <div className="flex items-center justify-between text-gray-400 mb-2">
-            <span className="text-xs font-condensed font-bold uppercase tracking-wider">LOBBY CHECK-IN</span>
-            <Clock className="w-4 h-4 text-[#ffb60e]" />
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider text-gray-300">LOBBY CHECK-IN</span>
+            <Clock className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-teko font-bold text-white">{presentCount} / {totalTeams}</span>
-            <span className="text-xs text-[#ffb60e] font-condensed font-bold uppercase">
+            <span className="text-xs text-emerald-400 font-condensed font-bold uppercase">
               {totalTeams > 0 ? Math.round((presentCount / totalTeams) * 100) : 0}% RATE
             </span>
           </div>
@@ -391,9 +397,9 @@ export function OverviewDashboard({ tournament, onNavigateTab, onRefresh }: Over
         </div>
 
         {/* Disputes & Penalties Metric */}
-        <div className="bg-[#171716] border border-[#333333] p-4 tactical-cut relative">
+        <div className="bg-[#171716] border border-[#333333] border-t-2 border-t-rose-500 p-4 tactical-cut relative hover:border-rose-500/50 transition-all shadow-lg">
           <div className="flex items-center justify-between text-gray-400 mb-2">
-            <span className="text-xs font-condensed font-bold uppercase tracking-wider">INTEGRITY DESK</span>
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider text-gray-300">INTEGRITY DESK</span>
             <ShieldAlert className="w-4 h-4 text-rose-400" />
           </div>
           <div className="flex items-baseline gap-2">

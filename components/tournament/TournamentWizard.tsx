@@ -563,20 +563,20 @@ export function TournamentWizard() {
             <button
               type="button"
               onClick={handleNext}
-              className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-6 py-2 flex items-center gap-1.5 text-base"
+              className="tactical-btn-gold px-6 py-2 text-xs flex items-center gap-1.5 shadow-md shadow-[#ffb60e]/20"
             >
-              CONTINUE
-              <ArrowRight className="w-4 h-4 text-black" />
+              <span>CONTINUE</span>
+              <ArrowRight className="w-4 h-4 text-black stroke-[2.5]" />
             </button>
           ) : (
             <button
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-7 py-2.5 flex items-center gap-2 text-lg shadow-xl shadow-[#ffb60e]/30"
+              className="tactical-btn-gold px-7 py-2.5 text-sm flex items-center gap-2 shadow-xl shadow-[#ffb60e]/30"
             >
-              <CheckCircle className="w-5 h-5 text-black" />
-              {isSubmitting ? 'INITIALIZING TOURNAMENT...' : 'LAUNCH TOURNAMENT'}
+              <CheckCircle className="w-5 h-5 text-black stroke-[2.5]" />
+              <span>{isSubmitting ? 'INITIALIZING TOURNAMENT...' : 'LAUNCH TOURNAMENT'}</span>
             </button>
           )}
         </div>

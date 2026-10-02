@@ -103,10 +103,10 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="tactical-btn-gold px-4 py-2 font-heading font-black tracking-wider uppercase text-xs shadow-lg shadow-[#ffb60e]/15 flex items-center gap-1.5"
+          className="tactical-btn-gold px-4 py-2 text-xs shadow-lg shadow-[#ffb60e]/20 flex items-center gap-1.5"
         >
-          <PlusCircle className="w-4 h-4" />
-          File Squad Protest
+          <PlusCircle className="w-4 h-4 stroke-[2.5]" />
+          <span>File Squad Protest</span>
         </button>
       </div>
 
@@ -185,7 +185,7 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
                       </select>
                       <button
                         onClick={() => handleResolve(d.id)}
-                        className="tactical-btn-gold px-4 py-1.5 text-xs font-heading font-black tracking-wider uppercase"
+                        className="tactical-btn-gold px-4 py-1.5 text-xs"
                       >
                         Submit
                       </button>
@@ -288,7 +288,7 @@ export function DisputeManagementView({ tournamentId }: { tournamentId: string }
                 </button>
                 <button
                   type="submit"
-                  className="tactical-btn-gold px-5 py-2 text-xs font-heading font-black tracking-wider uppercase shadow-md shadow-[#ffb60e]/20"
+                  className="tactical-btn-gold px-5 py-2 text-xs shadow-md shadow-[#ffb60e]/20"
                 >
                   Submit Dispute
                 </button>

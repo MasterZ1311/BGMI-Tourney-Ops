@@ -209,18 +209,18 @@ export function MatchControlView({ tournamentId }: { tournamentId: string }) {
           )}
 
           {/* Active Match Status Dashboard Strip */}
-          <div className={`bg-[#171716] border border-[#333333] tactical-cut p-5 shadow-2xl relative overflow-hidden ${
-            activeMatch.status === 'LIVE' ? 'border-l-4 border-l-[#ffb60e]' : ''
+          <div className={`hud-frame bg-[#171716] border border-[#333333] tactical-cut p-5 shadow-2xl relative overflow-hidden ${
+            activeMatch.status === 'LIVE' ? 'border-l-4 border-l-[#ffb60e] shadow-2xl shadow-[#ffb60e]/15' : ''
           }`}>
             {/* Dynamic Map Background Artwork */}
-            <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
               <img
                 src={`/images/maps/${(activeMatch.map || 'erangel').toLowerCase()}.jpg`}
                 alt=""
                 className="w-full h-full object-cover object-center"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/85 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/80 to-transparent" />
             </div>
 
             {activeMatch.status === 'LIVE' && (
@@ -289,10 +289,10 @@ export function MatchControlView({ tournamentId }: { tournamentId: string }) {
                 {activeMatch.status === 'OPEN' && (
                   <button
                     onClick={() => handleUpdateStatus('LIVE')}
-                    className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-4 py-1.5 flex items-center gap-1.5 text-base shadow-md shadow-[#ffb60e]/20"
+                    className="tactical-btn-gold px-4 py-2 text-xs flex items-center gap-1.5 shadow-md shadow-[#ffb60e]/20"
                   >
                     <Play className="w-4 h-4 fill-current text-black" />
-                    MARK LIVE (FLIGHT)
+                    <span>MARK LIVE (FLIGHT)</span>
                   </button>
                 )}
 

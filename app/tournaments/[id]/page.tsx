@@ -80,7 +80,7 @@ export default function TournamentWorkspacePage({
         <p className="text-lg font-heading font-black tracking-wider text-slate-200 uppercase">Tournament Not Found</p>
         <button
           onClick={() => router.push('/')}
-          className="tactical-btn-gold px-6 py-2.5 text-xs uppercase tracking-wider font-heading font-black"
+          className="tactical-btn-gold px-6 py-2.5 text-xs shadow-md shadow-[#ffb60e]/20"
         >
           Return to Control Center
         </button>

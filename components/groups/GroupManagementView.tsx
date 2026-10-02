@@ -159,10 +159,10 @@ export function GroupManagementView({ tournamentId }: { tournamentId: string }) 
         />
         <button
           type="submit"
-          className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-4 py-2 flex items-center gap-1.5 text-base shadow-md shadow-[#ffb60e]/20"
+          className="tactical-btn-gold px-4 py-2 text-xs flex items-center gap-1.5 shadow-md shadow-[#ffb60e]/20"
         >
-          <PlusCircle className="w-4 h-4 text-black" />
-          ADD GROUP
+          <PlusCircle className="w-4 h-4 text-black stroke-[2.5]" />
+          <span>ADD GROUP</span>
         </button>
       </form>
 

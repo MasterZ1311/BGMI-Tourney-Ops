@@ -74,8 +74,10 @@ module.exports = {
         }
       },
       fontFamily: {
-        teko: ["Teko", "sans-serif"],
-        heading: ["Teko", "sans-serif"],
+        oxanium: ["var(--font-oxanium)", "Oxanium", "sans-serif"],
+        rajdhani: ["var(--font-rajdhani)", "Rajdhani", "sans-serif"],
+        teko: ["var(--font-teko)", "Teko", "sans-serif"],
+        heading: ["var(--font-teko)", "Teko", "sans-serif"],
         condensed: ["Roboto Condensed", "sans-serif"],
         sans: ["Noto Sans", "sans-serif"],
       },

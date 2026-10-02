@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Header } from './Header';
 import { ShortcutsModal } from './ShortcutsModal';
 import { QuickSearchModal } from './QuickSearchModal';
 import { Watermark } from './Watermark';
+import { ClickSoundProvider } from './ClickSoundProvider';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
@@ -38,12 +40,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <>
+    <ClickSoundProvider>
+      {/* Background Wallpaper: BGMI Lone Survivor with Subdued Atmospheric Opacity */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
+        aria-hidden="true"
+      >
+        <Image
+          src="/images/Wallpaper.jpg"
+          alt="BGMI Battleground Atmospheric Wallpaper"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center opacity-[0.09] filter contrast-125 brightness-95"
+        />
+        {/* Subtle Krafton Dark Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/60 via-transparent to-[#101010]/85" />
+      </div>
+
       <Header
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
       />
-      <main>{children}</main>
+      <main className="relative z-10">{children}</main>
 
       <ShortcutsModal
         isOpen={isShortcutsOpen}
@@ -54,6 +73,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onClose={() => setIsSearchOpen(false)}
       />
       <Watermark />
-    </>
+    </ClickSoundProvider>
   );
 }

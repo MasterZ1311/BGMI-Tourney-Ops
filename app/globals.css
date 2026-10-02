@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,400&family=Teko:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&family=Oxanium:wght@500;600;700;800&family=Rajdhani:wght@500;600;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,400&family=Teko:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -93,19 +93,29 @@ body {
 
 /* Tactical Buttons & Glows */
 .tactical-btn-gold {
-  background-color: #ffb60e;
-  color: #000000;
-  font-family: 'Teko', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  background: linear-gradient(180deg, #ffc83b 0%, #ffb60e 55%, #e69d00 100%);
+  color: #080808;
+  font-family: var(--font-oxanium), 'Oxanium', var(--font-rajdhani), 'Rajdhani', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
-  transition: all 0.15s ease-in-out;
-  border: none;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 235, 150, 0.45);
+  box-shadow: 0 2px 8px rgba(255, 182, 14, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+  user-select: none;
 }
-.tactical-btn-gold:hover {
-  background-color: #ffc83b;
-  box-shadow: 0 0 15px rgba(255, 182, 14, 0.4);
+.tactical-btn-gold:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffd666 0%, #ffc125 50%, #f0a500 100%);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 18px rgba(255, 182, 14, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  transform: translateY(-1px);
+  color: #000000;
+}
+.tactical-btn-gold:active:not(:disabled) {
+  background: linear-gradient(180deg, #e69d00 0%, #d98f00 100%);
+  box-shadow: 0 1px 3px rgba(255, 182, 14, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.25);
+  transform: translateY(1px);
 }
 
 .pubg-glow {
@@ -114,4 +124,71 @@ body {
 
 .pubg-border-gold {
   border-color: #ffb60e;
+}
+
+/* Authentic Krafton Tactical Grid Pattern */
+.bgmi-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.bgmi-radial-vignette {
+  background: radial-gradient(circle at 50% -10%, rgba(255, 182, 14, 0.12) 0%, transparent 70%);
+}
+
+/* Tactical HUD Brackets for Cards & Panels */
+.hud-frame {
+  position: relative;
+}
+.hud-frame::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #ffb60e;
+  border-left: 2px solid #ffb60e;
+  pointer-events: none;
+  z-index: 10;
+}
+.hud-frame::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #ffb60e;
+  border-right: 2px solid #ffb60e;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Authentic Metallic Gold Gradient Text */
+.bgmi-text-gold {
+  background: linear-gradient(180deg, #ffffff 15%, #ffb60e 85%, #d99800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Military Chamfer Button Secondary */
+.tactical-btn-dark {
+  background-color: #1a1a1a;
+  color: #e5e5e5;
+  border: 1px solid #333333;
+  font-family: 'Teko', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+}
+.tactical-btn-dark:hover {
+  background-color: #242424;
+  border-color: #ffb60e;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 182, 14, 0.2);
 }

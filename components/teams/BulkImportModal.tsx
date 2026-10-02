@@ -205,7 +205,7 @@ Team XSpark,TX,Shadow,SHADOW,5211223344,Spraygod,5222334455,Sarang,5233445566,Ni
           <button
             onClick={handleCommit}
             disabled={isCommitting || !previewResult || previewResult.validCount === 0}
-            className="tactical-btn-gold px-6 py-2.5 text-xs uppercase tracking-wider font-heading font-black shadow-lg shadow-[#ffb60e]/20 disabled:opacity-50"
+            className="tactical-btn-gold px-6 py-2.5 text-xs shadow-lg shadow-[#ffb60e]/20 disabled:opacity-50"
           >
             {isCommitting
               ? 'Importing...'

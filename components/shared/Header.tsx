@@ -14,7 +14,10 @@ import {
   Radio,
   Tv,
   ExternalLink,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
+import { clickSound } from '@/lib/audio/click-sound';
 
 interface TournamentOption {
   id: string;
@@ -34,6 +37,17 @@ export function Header({
   const router = useRouter();
   const pathname = usePathname();
   const [tournaments, setTournaments] = useState<TournamentOption[]>([]);
+  const [isMuted, setIsMuted] = useState(false);
+
+  useEffect(() => {
+    setIsMuted(clickSound.isSoundMuted());
+    const handleMuteChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ isMuted: boolean }>;
+      setIsMuted(customEvent.detail.isMuted);
+    };
+    window.addEventListener('bgmi-sound-mute-change', handleMuteChange);
+    return () => window.removeEventListener('bgmi-sound-mute-change', handleMuteChange);
+  }, []);
 
   useEffect(() => {
     fetch('/api/tournaments')
@@ -132,9 +146,9 @@ export function Header({
           {/* + New Tournament Button */}
           <Link
             href="/tournaments/new"
-            className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-3.5 py-1.5 flex items-center gap-1.5 text-base"
+            className="tactical-btn-gold px-3.5 py-1.5 text-xs flex items-center gap-1.5 shadow-md shadow-[#ffb60e]/20"
           >
-            <PlusCircle className="w-4 h-4 text-black" />
+            <PlusCircle className="w-4 h-4 text-black stroke-[2.5]" />
             <span className="hidden sm:inline">NEW TOURNAMENT</span>
           </Link>
 
@@ -145,6 +159,20 @@ export function Header({
             title="Keyboard Shortcuts (?)"
           >
             <HelpCircle className="w-4 h-4" />
+          </button>
+
+          {/* Tactical Audio Feedback Toggle */}
+          <button
+            onClick={() => setIsMuted(clickSound.toggleMute())}
+            className="p-1.5 text-gray-400 hover:text-[#ffb60e] hover:bg-[#171716] border border-transparent hover:border-[#333333] transition-colors"
+            title={isMuted ? 'Unmute BGMI UI Click Sound' : 'Mute BGMI UI Click Sound'}
+            aria-label={isMuted ? 'Unmute UI sound' : 'Mute UI sound'}
+          >
+            {isMuted ? (
+              <VolumeX className="w-4 h-4 text-rose-400" />
+            ) : (
+              <Volume2 className="w-4 h-4 text-[#ffb60e]" />
+            )}
           </button>
 
           {/* User Role Badge */}

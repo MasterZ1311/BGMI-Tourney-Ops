@@ -72,7 +72,7 @@ export function TournamentSubNav({ activeTab, onTabChange, counts }: SubNavProps
               className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-condensed uppercase tracking-wider font-bold transition-all tactical-cut ${
                 isActive
                   ? 'bg-[#ffb60e] text-black shadow-md shadow-[#ffb60e]/20 font-black'
-                  : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a] border border-transparent'
+                  : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a] border border-white/5 hover:border-[#ffb60e]/40'
               }`}
             >
               <span className={isActive ? 'text-black' : 'text-[#ffb60e]'}>{tab.icon}</span>

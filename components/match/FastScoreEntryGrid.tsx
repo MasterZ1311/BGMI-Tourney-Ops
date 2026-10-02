@@ -253,17 +253,17 @@ export function FastScoreEntryGrid({
   return (
     <div className="space-y-4">
       {/* Header and Verification Workflow */}
-      <div className="relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 tactical-cut bg-[#171716] border border-[#333333]">
+      <div className="hud-frame relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 tactical-cut bg-[#171716] border border-[#333333] shadow-xl">
         {/* Dynamic Map Background Artwork */}
         {match?.map && (
-          <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
             <img
               src={`/images/maps/${(match?.map || 'erangel').toLowerCase()}.jpg`}
               alt=""
               className="w-full h-full object-cover object-center"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/85 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/80 to-transparent" />
           </div>
         )}
 
@@ -315,10 +315,10 @@ export function FastScoreEntryGrid({
           <button
             onClick={handlePublish}
             disabled={isSubmitting || isLoading}
-            className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-4 py-1.5 flex items-center gap-1.5 text-sm shadow-md shadow-[#ffb60e]/20 disabled:opacity-50"
+            className="tactical-btn-gold px-4 py-2 text-xs flex items-center gap-1.5 shadow-md shadow-[#ffb60e]/20 disabled:opacity-50"
           >
-            <Globe className="w-4 h-4 text-black" />
-            PUBLISH LEADERBOARD
+            <Globe className="w-4 h-4 text-black stroke-[2.5]" />
+            <span>PUBLISH LEADERBOARD</span>
           </button>
         </div>
       </div>

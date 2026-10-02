@@ -170,10 +170,10 @@ export function SettingsView({
             <button
               onClick={handleFinalize}
               disabled={isFinalizing || !allPassed}
-              className="tactical-btn-gold px-6 py-3 text-xs uppercase tracking-wider font-heading font-black shadow-xl shadow-[#ffb60e]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2"
+              className="tactical-btn-gold px-6 py-3 text-xs shadow-xl shadow-[#ffb60e]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              <Lock className="w-3.5 h-3.5" />
-              {isFinalizing ? 'AUDITING & LOCKING...' : 'FINALIZE TOURNAMENT & LOCK STANDINGS'}
+              <Lock className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>{isFinalizing ? 'AUDITING & LOCKING...' : 'FINALIZE TOURNAMENT & LOCK STANDINGS'}</span>
             </button>
           </div>
         )}

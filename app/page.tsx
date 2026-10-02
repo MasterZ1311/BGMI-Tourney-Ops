@@ -94,45 +94,54 @@ export default function RootHomePage() {
 
   // If no tournament exists, display onboarding welcome screen
   if (!activeTournament) {
+    const battlegroundMaps = [
+      { name: 'ERANGEL', size: '8x8 KM', type: 'CLASSIC BATTLE ROYALE', img: '/images/maps/erangel.jpg' },
+      { name: 'MIRAMAR', size: '8x8 KM', type: 'DESERT WARFARE', img: '/images/maps/miramar.jpg' },
+      { name: 'SANHOK', size: '4x4 KM', type: 'JUNGLE ASSAULT', img: '/images/maps/sanhok.jpg' },
+      { name: 'VIKENDI', size: '6x6 KM', type: 'GLACIAL COMBAT', img: '/images/maps/vikendi.jpg' },
+      { name: 'RONDO', size: '8x8 KM', type: 'ORIENTAL TACTICAL', img: '/images/maps/rondo.jpg' },
+    ];
+
     return (
-      <div className="max-w-4xl mx-auto py-16 px-4 space-y-12">
-        <div className="text-center space-y-5">
+      <div className="relative min-h-[calc(100vh-60px)] bgmi-grid-pattern bgmi-radial-vignette py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* Hero Banner Section */}
+        <div className="max-w-4xl mx-auto text-center space-y-5">
           <div className="flex justify-center items-center">
-            <div className="relative w-64 sm:w-80 h-20 sm:h-28 transition-transform hover:scale-105 duration-300">
+            <div className="relative w-72 sm:w-96 h-24 sm:h-32 transition-transform hover:scale-105 duration-300">
               <Image
                 src="/images/logos/BGMI_logo.svg"
                 alt="Battlegrounds Mobile India"
                 fill
-                className="object-contain drop-shadow-[0_8px_24px_rgba(255,182,14,0.2)]"
+                className="object-contain drop-shadow-[0_10px_30px_rgba(255,182,14,0.3)]"
                 priority
               />
             </div>
           </div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 tactical-cut bg-[#ffb60e]/15 border border-[#ffb60e]/40 text-[#ffb60e] font-condensed font-black tracking-widest text-xs uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#ffb60e] animate-pulse" />
-            <span>TOURNAMENT CONTROL CENTER // ESPORTS OPS</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 tactical-cut bg-[#ffb60e]/15 border border-[#ffb60e]/40 text-[#ffb60e] font-condensed font-black tracking-widest text-xs uppercase shadow-md shadow-[#ffb60e]/10">
+            <span className="w-2 h-2 rounded-full bg-[#ffb60e] animate-pulse" />
+            <span>OFFICIAL ESPORTS TOURNAMENT CONTROL SYSTEM // BGIS & BMPS COMPLIANT</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-heading font-black text-white tracking-wider uppercase">
-            Command Center Architecture
+          <h1 className="text-4xl sm:text-6xl font-heading font-black text-white tracking-wider uppercase leading-none">
+            TOURNAMENT COMMAND CENTER
           </h1>
-          <p className="text-slate-300 max-w-xl mx-auto text-sm leading-relaxed font-sans">
-            The authoritative esports operations hub for Battlegrounds Mobile India organizers.
-            Plan map rotations, manage squad check-in, dispatch room credentials, execute rapid score entry, and finalize leaderboards without spreadsheets.
+          <p className="text-slate-300 max-w-2xl mx-auto text-sm leading-relaxed font-sans">
+            The authoritative operations hub for Battlegrounds Mobile India organizers.
+            Automate map rotations, manage squad check-in, dispatch secure room credentials, execute rapid 60-second score entries, and finalize official leaderboards without spreadsheets.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
             <Link
               href="/tournaments/new"
-              className="tactical-btn-gold px-8 py-3.5 text-sm uppercase tracking-wider font-heading font-black shadow-xl shadow-[#ffb60e]/20 transition-all flex items-center gap-2"
+              className="tactical-btn-gold px-8 py-3.5 text-sm shadow-xl shadow-[#ffb60e]/25 transition-all flex items-center gap-2 group"
             >
-              <PlusCircle className="w-5 h-5 text-black" />
+              <PlusCircle className="w-5 h-5 text-black group-hover:rotate-90 transition-transform duration-200 stroke-[2.5]" />
               <span>CREATE FIRST TOURNAMENT</span>
             </Link>
 
             <button
               onClick={handleSeedDemo}
               disabled={isSeeding}
-              className="tactical-cut bg-[#151515] hover:bg-[#202020] text-slate-200 border border-white/10 hover:border-[#ffb60e]/50 px-6 py-3.5 text-sm uppercase tracking-wider font-heading font-black transition-all flex items-center gap-2"
+              className="tactical-btn-dark px-7 py-3.5 text-sm uppercase tracking-wider font-heading font-black flex items-center gap-2"
             >
               <Radio className={`w-4 h-4 text-[#ffb60e] ${isSeeding ? 'animate-pulse' : ''}`} />
               <span>{isSeeding ? 'SEEDING TOURNAMENT...' : 'LOAD SAMPLE TOURNAMENT TEMPLATE'}</span>
@@ -140,35 +149,93 @@ export default function RootHomePage() {
           </div>
         </div>
 
-        {/* Features Matrix */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-          <div className="tactical-cut bg-[#121212] border border-white/10 p-6 space-y-3 hover:border-[#ffb60e]/40 transition-all">
-            <div className="w-10 h-10 tactical-cut bg-[#ffb60e]/10 border border-[#ffb60e]/30 flex items-center justify-center text-[#ffb60e]">
-              <Calculator className="w-5 h-5" />
+        {/* Official Battlegrounds Map Pool Gallery */}
+        <div className="max-w-6xl mx-auto space-y-3">
+          <div className="flex items-center justify-between border-b border-[#333333] pb-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#ffb60e]"></span>
+              <h2 className="text-xl font-heading font-bold text-white tracking-wider uppercase">
+                COMPETITION BATTLEGROUND POOL (5 OFFICIAL MAPS)
+              </h2>
             </div>
-            <h3 className="text-base font-heading font-bold text-white tracking-wide uppercase">Configurable Scoring Engine</h3>
+            <span className="text-[11px] font-condensed font-bold uppercase tracking-widest text-[#ffb60e]">
+              READY FOR MAP ROTATION
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+            {battlegroundMaps.map((map) => (
+              <div
+                key={map.name}
+                className="group relative h-40 tactical-cut overflow-hidden border border-[#333333] hover:border-[#ffb60e] transition-all duration-300 shadow-xl"
+              >
+                <img
+                  src={map.img}
+                  alt={map.name}
+                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="absolute top-2.5 right-2.5 px-1.5 py-0.5 tactical-cut bg-black/80 border border-white/20 text-[10px] font-condensed font-black tracking-wider text-white">
+                  {map.size}
+                </div>
+                <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                  <p className="text-[10px] font-condensed font-bold tracking-widest text-[#ffb60e] uppercase">
+                    {map.type}
+                  </p>
+                  <h3 className="text-2xl font-heading font-bold text-white tracking-wider leading-none">
+                    {map.name}
+                  </h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Features Matrix with Tactical HUD Frames */}
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div className="hud-frame bg-[#141414] border border-[#2e2e2e] p-6 space-y-3 hover:border-[#ffb60e]/50 transition-all shadow-xl">
+            <div className="w-12 h-12 tactical-cut bg-[#ffb60e]/10 border border-[#ffb60e]/30 flex items-center justify-center text-[#ffb60e]">
+              <Calculator className="w-6 h-6" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-condensed font-black tracking-widest text-[#ffb60e]">01 // ENGINE</span>
+            </div>
+            <h3 className="text-xl font-heading font-bold text-white tracking-wide uppercase leading-tight">
+              Configurable Scoring Engine
+            </h3>
             <p className="text-xs text-slate-400 leading-relaxed font-sans">
-              Official BGIS 10-Point, BMPS 15-Point, or custom rules. Automatic tie-breaker trees (WWCD, Placement, Kills, Best Match).
+              Official BGIS 10-Point, BMPS 15-Point, or custom rulesets. Multi-tier deterministic tie-breakers (WWCD, Placement Points, Kill Counts, Best Match).
             </p>
           </div>
 
-          <div className="tactical-cut bg-[#121212] border border-white/10 p-6 space-y-3 hover:border-[#ffb60e]/40 transition-all">
-            <div className="w-10 h-10 tactical-cut bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-              <Play className="w-5 h-5" />
+          <div className="hud-frame bg-[#141414] border border-[#2e2e2e] p-6 space-y-3 hover:border-cyan-500/50 transition-all shadow-xl">
+            <div className="w-12 h-12 tactical-cut bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+              <Play className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-heading font-bold text-white tracking-wide uppercase">Rapid Match Day Ops</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-condensed font-black tracking-widest text-cyan-400">02 // MATCH DAY</span>
+            </div>
+            <h3 className="text-xl font-heading font-bold text-white tracking-wide uppercase leading-tight">
+              Rapid Match Day Operations
+            </h3>
             <p className="text-xs text-slate-400 leading-relaxed font-sans">
-              1-click attendance check-in, instant Room ID/Password copy, lobby conflict detection, and 60-second score entry.
+              1-click squad attendance check-in, formatted Room ID/Password copy, real-time schedule conflict prevention, and 60-second score entry grid.
             </p>
           </div>
 
-          <div className="tactical-cut bg-[#121212] border border-white/10 p-6 space-y-3 hover:border-[#ffb60e]/40 transition-all">
-            <div className="w-10 h-10 tactical-cut bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <Shield className="w-5 h-5" />
+          <div className="hud-frame bg-[#141414] border border-[#2e2e2e] p-6 space-y-3 hover:border-amber-500/50 transition-all shadow-xl">
+            <div className="w-12 h-12 tactical-cut bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+              <Shield className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-heading font-bold text-white tracking-wide uppercase">Integrity & Audit</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-condensed font-black tracking-widest text-amber-400">03 // INTEGRITY</span>
+            </div>
+            <h3 className="text-xl font-heading font-bold text-white tracking-wide uppercase leading-tight">
+              Integrity & Pre-Flight Audit
+            </h3>
             <p className="text-xs text-slate-400 leading-relaxed font-sans">
-              Immutable audit logs, point penalties, dispute adjudication desk, and pre-flight finalization checklist guards.
+              Full immutable audit trail, point penalties, dedicated dispute resolution desk, and pre-flight finalization checklist guarding standings.
             </p>
           </div>
         </div>

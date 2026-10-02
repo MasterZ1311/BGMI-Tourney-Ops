@@ -169,8 +169,53 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
         </div>
       )}
 
+      {/* Quick Esports Standings Overview Bar */}
+      {data?.standings && data.standings.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#101010] border border-[#2e2e2e] p-3 tactical-cut">
+          <div className="border-l-2 border-l-[#ffb60e] pl-3">
+            <p className="text-[10px] text-gray-400 font-condensed font-bold uppercase tracking-wider">CURRENT #1 SQUAD</p>
+            <p className="text-xl font-teko uppercase font-bold text-white leading-none mt-0.5">
+              {data.standings[0]?.teamName || 'TBD'}
+            </p>
+            <span className="text-[10px] text-[#ffb60e] font-condensed font-black">
+              {data.standings[0]?.totalPoints} PTS ({data.standings[0]?.wwcdCount} WWCD)
+            </span>
+          </div>
+
+          <div className="border-l-2 border-l-emerald-500 pl-3">
+            <p className="text-[10px] text-gray-400 font-condensed font-bold uppercase tracking-wider">TOTAL WWCDs AWARDED</p>
+            <p className="text-xl font-teko uppercase font-bold text-white leading-none mt-0.5">
+              {data.standings.reduce((acc: number, s: any) => acc + (s.wwcdCount || 0), 0)} WINS
+            </p>
+            <span className="text-[10px] text-emerald-400 font-condensed font-black">
+              BATTLEGROUND VICTORIES
+            </span>
+          </div>
+
+          <div className="border-l-2 border-l-rose-500 pl-3">
+            <p className="text-[10px] text-gray-400 font-condensed font-bold uppercase tracking-wider">TOTAL ELIMINATIONS</p>
+            <p className="text-xl font-teko uppercase font-bold text-white leading-none mt-0.5">
+              {data.standings.reduce((acc: number, s: any) => acc + (s.killPoints || 0), 0)} KILLS
+            </p>
+            <span className="text-[10px] text-rose-400 font-condensed font-black">
+              AGGRESSION POINTS
+            </span>
+          </div>
+
+          <div className="border-l-2 border-l-cyan-500 pl-3">
+            <p className="text-[10px] text-gray-400 font-condensed font-bold uppercase tracking-wider">ACTIVE LOBBY SQUADS</p>
+            <p className="text-xl font-teko uppercase font-bold text-white leading-none mt-0.5">
+              {data.standings.length} TEAMS
+            </p>
+            <span className="text-[10px] text-cyan-400 font-condensed font-black">
+              OFFICIAL ROSTER
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Leaderboard Data Table */}
-      <div className="bg-[#171716] border border-[#333333] tactical-cut overflow-hidden shadow-2xl">
+      <div className="hud-frame bg-[#171716] border border-[#333333] tactical-cut overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead>
@@ -247,10 +292,15 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
                       <td className="py-3 px-4">
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-white text-sm">{standing.teamName}</span>
-                            <span className="text-[10px] text-[#ffb60e] font-condensed font-bold">
+                            <span className="font-bold text-white text-base leading-tight">{standing.teamName}</span>
+                            <span className="text-[11px] text-[#ffb60e] font-condensed font-black">
                               [{standing.teamTag}]
                             </span>
+                            {isLeader && (
+                              <span className="px-2 py-0.5 tactical-cut bg-[#ffb60e] text-black font-condensed font-black text-[10px] uppercase tracking-wider shadow-sm">
+                                WWCD LEADER
+                              </span>
+                            )}
                           </div>
                           {standing.tieBreakReason && (
                             <div className="mt-1">
@@ -308,7 +358,7 @@ export function LeaderboardView({ tournamentId }: { tournamentId: string }) {
                       </td>
 
                       {/* Net Total Points */}
-                      <td className="py-3 px-4 text-right font-black text-lg text-[#ffb60e]">
+                      <td className="py-3 px-4 text-right font-teko font-black text-2xl text-[#ffb60e] tracking-wider">
                         {standing.totalPoints}
                       </td>
                     </tr>

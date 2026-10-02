@@ -80,10 +80,10 @@ export function ReportsView({ tournamentId }: { tournamentId: string }) {
           </p>
           <button
             onClick={handleExportStandings}
-            className="tactical-btn-gold w-full flex items-center justify-center gap-2 py-2.5 text-xs font-heading font-black tracking-wider uppercase shadow-lg shadow-[#ffb60e]/15"
+            className="tactical-btn-gold w-full flex items-center justify-center gap-2 py-2.5 text-xs shadow-lg shadow-[#ffb60e]/20"
           >
-            <Download className="w-4 h-4" />
-            Download Standings CSV
+            <Download className="w-4 h-4 stroke-[2.5]" />
+            <span>Download Standings CSV</span>
           </button>
         </div>
 

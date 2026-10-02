@@ -94,10 +94,10 @@ export function ScheduleView({
         <button
           onClick={handleGenerateBatch}
           disabled={isGenerating}
-          className="tactical-btn-gold text-xs font-teko font-bold text-black uppercase tracking-wider px-4 py-2 flex items-center gap-1.5 text-base shadow-lg shadow-[#ffb60e]/20 disabled:opacity-50"
+          className="tactical-btn-gold px-4 py-2 text-xs flex items-center gap-1.5 shadow-lg shadow-[#ffb60e]/20 disabled:opacity-50"
         >
-          <PlusCircle className="w-4 h-4 text-black" />
-          {isGenerating ? 'GENERATING...' : 'BATCH GENERATE SCHEDULE (5 MAPS)'}
+          <PlusCircle className="w-4 h-4 text-black stroke-[2.5]" />
+          <span>{isGenerating ? 'GENERATING...' : 'BATCH GENERATE SCHEDULE (5 MAPS)'}</span>
         </button>
       </div>
 
@@ -128,7 +128,7 @@ export function ScheduleView({
               }`}
             >
               {/* Dynamic Map Background Artwork */}
-              <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+              <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
                 <img
                   src={`/images/maps/${(match.map || 'erangel').toLowerCase()}.jpg`}
                   alt=""
