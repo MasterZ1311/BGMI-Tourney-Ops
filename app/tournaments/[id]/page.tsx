@@ -107,50 +107,53 @@ export default function TournamentWorkspacePage({
 
       {/* Main Content View per Tab */}
       <div className="flex-1 px-4 lg:px-8 py-6 max-w-7xl mx-auto w-full">
-        {activeTab === 'overview' && (
-          <OverviewDashboard
-            tournament={tournament}
-            onNavigateTab={handleTabChange}
-            onRefresh={fetchTournament}
-          />
-        )}
+        <div key={activeTab} className="animate-tab-enter">
+          {activeTab === 'overview' && (
+            <OverviewDashboard
+              tournament={tournament}
+              onNavigateTab={handleTabChange}
+              onRefresh={fetchTournament}
+            />
+          )}
 
-        {activeTab === 'teams' && <TeamManagementView tournamentId={params.id} />}
+          {activeTab === 'teams' && <TeamManagementView tournamentId={params.id} />}
 
-        {activeTab === 'groups' && <GroupManagementView tournamentId={params.id} />}
+          {activeTab === 'groups' && <GroupManagementView tournamentId={params.id} />}
 
-        {activeTab === 'schedule' && (
-          <ScheduleView tournamentId={params.id} onNavigateTab={handleTabChange} />
-        )}
+          {activeTab === 'schedule' && (
+            <ScheduleView tournamentId={params.id} onNavigateTab={handleTabChange} />
+          )}
 
-        {activeTab === 'rooms' && <RoomManagementView tournamentId={params.id} />}
+          {activeTab === 'rooms' && <RoomManagementView tournamentId={params.id} />}
 
-        {activeTab === 'attendance' && <AttendanceView tournamentId={params.id} />}
+          {activeTab === 'attendance' && <AttendanceView tournamentId={params.id} />}
 
-        {activeTab === 'matches' && <MatchControlView tournamentId={params.id} />}
+          {activeTab === 'matches' && <MatchControlView tournamentId={params.id} />}
 
-        {activeTab === 'scoring' && targetMatchId && (
-          <FastScoreEntryGrid
-            tournamentId={params.id}
-            matchId={targetMatchId}
-            onScoresSaved={fetchTournament}
-          />
-        )}
+          {activeTab === 'scoring' && (
+            <FastScoreEntryGrid
+              tournamentId={params.id}
+              matchId={targetMatchId}
+              onScoresSaved={fetchTournament}
+              onNavigateTab={handleTabChange}
+            />
+          )}
 
-        {activeTab === 'leaderboard' && <LeaderboardView tournamentId={params.id} />}
+          {activeTab === 'leaderboard' && <LeaderboardView tournamentId={params.id} />}
 
-        {activeTab === 'penalties' && <PenaltyManagementView tournamentId={params.id} />}
+          {activeTab === 'penalties' && <PenaltyManagementView tournamentId={params.id} />}
 
-        {activeTab === 'disputes' && <DisputeManagementView tournamentId={params.id} />}
+          {activeTab === 'disputes' && <DisputeManagementView tournamentId={params.id} />}
 
-        {activeTab === 'reports' && <ReportsView tournamentId={params.id} />}
+          {activeTab === 'reports' && <ReportsView tournamentId={params.id} />}
 
-        {activeTab === 'settings' && (
-          <SettingsView
-            tournamentId={params.id}
-            onTournamentFinalized={fetchTournament}
-          />
-        )}
+          {activeTab === 'settings' && (
+            <SettingsView
+              tournamentId={params.id}
+              onTournamentFinalized={fetchTournament}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -177,8 +177,9 @@ export function TournamentWizard() {
 
       {/* Step Content */}
       <div className="bg-[#171716] border border-[#333333] p-6 shadow-2xl">
-        {step === 1 && (
-          <div className="space-y-4">
+        <div key={step} className="animate-tab-enter">
+          {step === 1 && (
+            <div className="space-y-4">
             <h2 className="text-xl font-heading font-black tracking-wider text-white uppercase flex items-center gap-2">
               <Trophy className="w-5 h-5 text-[#ffb60e]" />
               Tournament Information
@@ -544,6 +545,7 @@ export function TournamentWizard() {
             </p>
           </div>
         )}
+        </div>
 
         {/* Navigation Buttons */}
         <div className="flex items-center justify-between mt-8 pt-4 border-t border-[#333333]">

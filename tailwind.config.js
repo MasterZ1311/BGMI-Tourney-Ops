@@ -86,6 +86,20 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        pageEnter: {
+          '0%': { opacity: '0', transform: 'translateY(10px) scale(0.996)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        tabEnter: {
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        'page-enter': 'pageEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'tab-enter': 'tabEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      },
     },
   },
   plugins: [],

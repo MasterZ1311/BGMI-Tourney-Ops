@@ -285,11 +285,12 @@ export default function RootHomePage() {
 
         {activeTab === 'matches' && <MatchControlView tournamentId={activeTournament.id} />}
 
-        {activeTab === 'scoring' && targetMatchId && (
+        {activeTab === 'scoring' && (
           <FastScoreEntryGrid
             tournamentId={activeTournament.id}
             matchId={targetMatchId}
             onScoresSaved={fetchTournaments}
+            onNavigateTab={setActiveTab}
           />
         )}
 

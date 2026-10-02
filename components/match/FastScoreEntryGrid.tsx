@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Calculator,
   Save,
@@ -13,6 +14,7 @@ import {
   Loader2,
   Keyboard,
   ArrowRight,
+  Calendar,
 } from 'lucide-react';
 import { calculateSingleTeamScore } from '@/lib/scoring/engine';
 import { BGIS_10_POINT_SYSTEM } from '@/lib/scoring/presets';
@@ -29,13 +31,17 @@ interface ScoreRow {
 
 export function FastScoreEntryGrid({
   tournamentId,
-  matchId,
+  matchId: propMatchId,
   onScoresSaved,
+  onNavigateTab,
 }: {
   tournamentId: string;
-  matchId: string;
+  matchId?: string;
   onScoresSaved?: () => void;
+  onNavigateTab?: (tab: any) => void;
 }) {
+  const [matches, setMatches] = useState<any[]>([]);
+  const [selectedMatchId, setSelectedMatchId] = useState<string>(propMatchId || '');
   const [match, setMatch] = useState<any | null>(null);
   const [teams, setTeams] = useState<any[]>([]);
   const [rows, setRows] = useState<ScoreRow[]>([]);
@@ -44,14 +50,54 @@ export function FastScoreEntryGrid({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // 1. Fetch Tournament Matches
+  const fetchMatchesList = async () => {
+    try {
+      const res = await fetch(`/api/tournaments/${tournamentId}/matches`);
+      const data = await res.json();
+      if (data.success && data.data && data.data.length > 0) {
+        setMatches(data.data);
+        const matchValid = data.data.some((m: any) => m.id === selectedMatchId);
+        if (!selectedMatchId || !matchValid) {
+          const live = data.data.find((m: any) => m.status === 'LIVE');
+          const ready = data.data.find((m: any) => m.status === 'READY' || m.status === 'OPEN');
+          const defaultMatch = live || ready || data.data[0];
+          setSelectedMatchId(defaultMatch.id);
+        }
+      } else {
+        setMatches([]);
+        setSelectedMatchId('');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error('Failed to load tournament matches for score entry:', err);
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Load match details, scoring rule, and teams
+    fetchMatchesList();
+  }, [tournamentId]);
+
+  useEffect(() => {
+    if (propMatchId) {
+      setSelectedMatchId(propMatchId);
+    }
+  }, [propMatchId]);
+
+  // 2. Load Match Details, Scoring Rule, and Teams for the selected match
+  useEffect(() => {
+    if (!selectedMatchId) {
+      if (matches.length === 0) setIsLoading(false);
+      return;
+    }
+
     const loadData = async () => {
       setIsLoading(true);
       setMessage(null);
       try {
         const [matchRes, teamsRes, tourRes] = await Promise.all([
-          fetch(`/api/matches/${matchId}`).then((r) => r.json()),
+          fetch(`/api/matches/${selectedMatchId}`).then((r) => r.json()),
           fetch(`/api/tournaments/${tournamentId}/teams`).then((r) => r.json()),
           fetch(`/api/tournaments/${tournamentId}`).then((r) => r.json()),
         ]);
@@ -114,7 +160,7 @@ export function FastScoreEntryGrid({
     };
 
     loadData();
-  }, [matchId, tournamentId]);
+  }, [selectedMatchId, tournamentId]);
 
   // Global Ctrl+S / Cmd+S quick save draft
   useEffect(() => {
@@ -126,7 +172,7 @@ export function FastScoreEntryGrid({
     };
     window.addEventListener('keydown', handleGlobalSave);
     return () => window.removeEventListener('keydown', handleGlobalSave);
-  }, [rows, matchId]);
+  }, [rows, selectedMatchId]);
 
   // Arrow up/down keyboard navigation between rows
   const handleCellKeyDown = (
@@ -166,6 +212,7 @@ export function FastScoreEntryGrid({
   };
 
   const handleSave = async (status: 'DRAFT' | 'SUBMITTED') => {
+    if (!selectedMatchId) return;
     setIsSubmitting(true);
     setMessage(null);
 
@@ -194,7 +241,7 @@ export function FastScoreEntryGrid({
     }
 
     try {
-      const res = await fetch(`/api/matches/${matchId}/results`, {
+      const res = await fetch(`/api/matches/${selectedMatchId}/results`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -213,6 +260,7 @@ export function FastScoreEntryGrid({
         text: `Match results successfully saved as ${status}!`,
       });
 
+      fetchMatchesList();
       if (onScoresSaved) onScoresSaved();
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
@@ -222,11 +270,13 @@ export function FastScoreEntryGrid({
   };
 
   const handleVerify = async () => {
+    if (!selectedMatchId) return;
     try {
-      const res = await fetch(`/api/matches/${matchId}/verify`, { method: 'POST' });
+      const res = await fetch(`/api/matches/${selectedMatchId}/verify`, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
         setMessage({ type: 'success', text: 'Match scores verified by Tournament Admin!' });
+        fetchMatchesList();
         if (onScoresSaved) onScoresSaved();
       }
     } catch (err: any) {
@@ -235,14 +285,16 @@ export function FastScoreEntryGrid({
   };
 
   const handlePublish = async () => {
+    if (!selectedMatchId) return;
     try {
-      const res = await fetch(`/api/matches/${matchId}/publish`, { method: 'POST' });
+      const res = await fetch(`/api/matches/${selectedMatchId}/publish`, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
         setMessage({
           type: 'success',
           text: 'Match scores PUBLISHED to official tournament leaderboard!',
         });
+        fetchMatchesList();
         if (onScoresSaved) onScoresSaved();
       }
     } catch (err: any) {
@@ -250,8 +302,102 @@ export function FastScoreEntryGrid({
     }
   };
 
+  // Empty State: When no matches are scheduled yet
+  if (!isLoading && matches.length === 0) {
+    return (
+      <div className="bg-[#171716] border border-dashed border-[#333333] tactical-cut p-10 text-center max-w-xl mx-auto my-12 space-y-4 shadow-2xl">
+        <div className="w-14 h-14 bg-[#ffb60e]/10 border border-[#ffb60e]/30 flex items-center justify-center text-[#ffb60e] mx-auto tactical-cut">
+          <Calculator className="w-7 h-7 text-[#ffb60e]" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-teko uppercase font-bold text-white tracking-wider">
+            NO MATCH FIXTURES SCHEDULED FOR SCORE ENTRY
+          </h3>
+          <p className="text-xs text-gray-400 font-sans max-w-md mx-auto mt-1 leading-relaxed">
+            Tournament fixtures must be generated before match placements, eliminations, and WWCDs can be entered. Navigate to the Schedule tab to generate your tournament fixtures.
+          </p>
+        </div>
+        {onNavigateTab ? (
+          <button
+            onClick={() => onNavigateTab('schedule')}
+            className="tactical-btn-gold px-6 py-2.5 text-xs uppercase tracking-wider font-heading font-black inline-flex items-center gap-2"
+          >
+            <Calendar className="w-4 h-4 text-black" />
+            <span>GO TO MATCH SCHEDULE</span>
+          </button>
+        ) : (
+          <Link
+            href={`/tournaments/${tournamentId}?tab=schedule`}
+            className="tactical-btn-gold px-6 py-2.5 text-xs uppercase tracking-wider font-heading font-black inline-flex items-center gap-2"
+          >
+            <Calendar className="w-4 h-4 text-black" />
+            <span>GO TO MATCH SCHEDULE</span>
+          </Link>
+        )}
+      </div>
+    );
+  }
+
+  // Initial loading spinner
+  if (isLoading && !match) {
+    return (
+      <div className="bg-[#171716] border border-[#333333] tactical-cut p-16 text-center text-gray-400 my-8">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <Loader2 className="w-8 h-8 text-[#ffb60e] animate-spin" />
+          <span className="text-xs font-condensed uppercase font-bold text-gray-300 tracking-wider">
+            Loading match score sheet & tournament rosters...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
+      {/* Match Selector Bar */}
+      {matches.length > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#171716] border border-[#333333] p-3 tactical-cut">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-condensed font-bold uppercase tracking-wider text-gray-400">
+              SELECT MATCH:
+            </span>
+            <select
+              value={selectedMatchId}
+              onChange={(e) => setSelectedMatchId(e.target.value)}
+              className="bg-[#101010] border border-[#333333] text-white text-xs font-condensed font-bold uppercase tracking-wider px-3 py-1.5 tactical-cut focus:border-[#ffb60e] outline-none"
+            >
+              {matches.map((m) => (
+                <option key={m.id} value={m.id}>
+                  Match #{m.matchNumber}: {m.title} ({m.map}) — [{m.resultStatus || m.status}]
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+            {matches.map((m) => {
+              const isSelected = m.id === selectedMatchId;
+              const isLive = m.status === 'LIVE';
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => setSelectedMatchId(m.id)}
+                  className={`px-3 py-1 text-xs font-condensed uppercase font-bold tracking-wider tactical-cut transition-all whitespace-nowrap ${
+                    isSelected
+                      ? 'bg-[#ffb60e] text-black font-black shadow-md'
+                      : isLive
+                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 hover:bg-rose-500/30'
+                      : 'bg-[#222222] text-gray-300 hover:text-white hover:bg-[#2a2a2a] border border-[#333333]'
+                  }`}
+                >
+                  #{m.matchNumber} {m.map}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Header and Verification Workflow */}
       <div className="hud-frame relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 tactical-cut bg-[#171716] border border-[#333333] shadow-xl">
         {/* Dynamic Map Background Artwork */}
@@ -261,7 +407,9 @@ export function FastScoreEntryGrid({
               src={`/images/maps/${(match?.map || 'erangel').toLowerCase()}.jpg`}
               alt=""
               className="w-full h-full object-cover object-center"
-              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#171716] via-[#171716]/80 to-transparent" />
           </div>
@@ -385,15 +533,8 @@ export function FastScoreEntryGrid({
         </div>
       )}
 
-      {/* Loading State */}
-      {isLoading ? (
-        <div className="bg-[#171716] border border-[#333333] tactical-cut p-12 text-center text-gray-400">
-          <div className="flex flex-col items-center justify-center gap-2">
-            <Loader2 className="w-6 h-6 text-[#ffb60e] animate-spin" />
-            <span className="text-xs font-condensed uppercase font-bold text-gray-300">Loading 16-slot match score sheet...</span>
-          </div>
-        </div>
-      ) : teams.length === 0 ? (
+      {/* 16-Row High Speed Entry Table */}
+      {teams.length === 0 ? (
         <div className="bg-[#171716] border border-dashed border-[#333333] tactical-cut p-10 text-center text-gray-400">
           <Trophy className="w-8 h-8 text-gray-600 mx-auto mb-2" />
           <h4 className="text-base font-teko uppercase font-bold text-gray-300">NO SQUADS ENROLLED</h4>
@@ -402,7 +543,6 @@ export function FastScoreEntryGrid({
           </p>
         </div>
       ) : (
-        /* 16-Row High Speed Entry Table */
         <div className="bg-[#171716] border border-[#333333] tactical-cut overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">

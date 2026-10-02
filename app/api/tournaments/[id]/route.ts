@@ -17,6 +17,12 @@ export async function GET(
             _count: { select: { teams: true, matches: true } },
           },
         },
+        matches: {
+          include: {
+            room: true,
+          },
+          orderBy: { matchNumber: 'asc' },
+        },
         _count: {
           select: {
             teams: true,
